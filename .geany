@@ -28,10 +28,12 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=0
-FILE_NAME_0=199;Java;0;EUTF-8;1;1;1;%2Fhome%2Fadrien%2FSources%2FIA04%2Fsrc%2Ftp2%2FMainCt.java;0;4
-FILE_NAME_1=39;Conf;0;EUTF-8;1;1;1;%2Fhome%2Fadrien%2FSources%2FIA04%2Fsrc%2Ftp2%2FMainCt.conf;0;4
-FILE_NAME_2=494;Make;0;EUTF-8;1;1;1;%2Fhome%2Fadrien%2FSources%2FIA04%2Fmakefile;0;4
+current_page=3
+FILE_NAME_0=199;Java;0;EUTF-8;1;1;1;%2Fhome%2Fadrien%2FSources%2FIA04%2Fsrc%2Ftp1%2FMainCt.java;0;4
+FILE_NAME_1=410;Java;0;EUTF-8;1;1;1;%2Fhome%2Fadrien%2FSources%2FIA04%2Fsrc%2Ftp1%2FhelloCt%2FHelloCt.java;0;4
+FILE_NAME_2=189;Java;0;EUTF-8;1;1;1;%2Fhome%2Fadrien%2FSources%2FIA04%2Fsrc%2Ftp1%2FhelloCt%2FHelloAgt.java;0;4
+FILE_NAME_3=325;Java;0;EUTF-8;1;1;1;%2Fhome%2Fadrien%2FSources%2FIA04%2Fsrc%2Ftp1%2FhelloCt%2FContactBhv.java;0;4
+FILE_NAME_4=66;Make;0;EUTF-8;1;1;1;%2Fhome%2Fadrien%2FSources%2FIA04%2Fmakefile;0;4
 
 [debugger]
 target=
@@ -55,5 +57,8 @@ JavaFT_00_CM=make
 JavaFT_00_WD=%p
 filetypes=Java;
 EX_00_LB=_Execute
-EX_00_CM=java -cp ../lib/jade.jar: $(echo %d | sed "s/.*src\\///" | tr / .).%e
+EX_00_CM=java -cp ../lib/jade.jar: $(echo %d | sed 's/.*src\\///' | tr / .).%e
 EX_00_WD=%p/bin
+NF_01_LB=Make Custom _Target
+NF_01_CM=make 
+NF_01_WD=%p
