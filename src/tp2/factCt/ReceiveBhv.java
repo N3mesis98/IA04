@@ -1,20 +1,26 @@
 package tp2.factCt;
 
-import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 
 public class ReceiveBhv extends Behaviour {
-	private Agent parentAgt;
+	private FactAgt parentAgt;
 	
-	public ReceiveBhv(Agent parentAgt){
+	public ReceiveBhv(FactAgt parentAgt){
 		this.parentAgt = parentAgt;
 	}
 	
 	//@Override
 	public void action() {
-		
+		MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
+		ACLMessage message = this.parentAgt.receive(mt);
+		if (message != null) {
+			this.parentAgt.addBehaviour(new FactBhv(this.parentAgt, message));
+		}
+		else {
+			block();
+		}
 	}
 	//@Override
 	public boolean done() {
