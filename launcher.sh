@@ -33,8 +33,8 @@ case $target in
 	"tp2")
 		launch "tp2.MainCt" &
 		read -r
-		launch "tp2.factCt.FactCt" &
-		launch "tp2.multCt.MultCt"
+		launch "tp2.multCt.MultCt" &
+		launch "tp2.factCt.FactCt"
 		;;
 	*)
 		echo "Error: Unknown target"
