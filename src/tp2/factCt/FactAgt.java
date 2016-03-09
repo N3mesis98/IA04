@@ -12,4 +12,7 @@ public class FactAgt extends Agent {
 		
 		addBehaviour(new ReceiveBhv(this));
 	}
+
+
+
 }

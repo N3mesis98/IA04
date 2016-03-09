@@ -4,8 +4,13 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.CyclicBehaviour;
+import jade.domain.DFService;
+import jade.domain.FIPAAgentManagement.DFAgentDescription;
+import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import tp2.ComFactMult;
 import tp2.multCt.MultBhv;
 
 import java.util.Date;
@@ -44,13 +49,15 @@ public class FactBhv extends Behaviour {
 				MessageTemplate.MatchPerformative( ACLMessage.INFORM ),
 				MessageTemplate.and(
 					MessageTemplate.MatchConversationId(conversationId),
-					MessageTemplate.MatchSender( new AID( "MultAgt", AID.ISLOCALNAME))
+					MessageTemplate.MatchSender( getReceiver("Operations", "Multiplication"))
 				)
 			);
 			ACLMessage message = this.parentAgt.receive(mt);
 			if (message != null) {
 				System.out.println(this.parentAgt.getLocalName()+" : "+message.getContent());
-				int a = new Integer(message.getContent());
+				ComFactMult resultMult = new ComFactMult();
+				resultMult.deserialisationJSONComFactMult(message.getContent());
+				int a = new Integer(resultMult.getResult());
 				if (nextValue <= 1 ) {
 					endFact(a);
 				}
@@ -77,10 +84,47 @@ public class FactBhv extends Behaviour {
 
 	private void sendMult(int a, int b) {
 		ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
-		message.addReceiver(new AID("MultAgt", AID.ISLOCALNAME));
-		message.setContent(a+"*"+b);
+		message.addReceiver(getReceiver("Operations", "Multiplication"));
+		ComFactMult askMult = new ComFactMult(a,b);
+		message.setContent(askMult.serialisationJSONComFactMult());
 		conversationId= ""+new Date().getTime();
 		message.setConversationId(conversationId);
 		this.parentAgt.send(message);
 	}
+
+
+
+
+
+	private AID getReceiver(String typeService, String nameSpecificService) {
+		DFAgentDescription[] result = null;
+		DFAgentDescription template = new DFAgentDescription();
+
+		ServiceDescription sd = new ServiceDescription();
+		sd.setType(typeService);
+		sd.setName(nameSpecificService);
+
+		template.addServices(sd);
+		try {
+			result = DFService.search(parentAgt, template);
+
+		} catch(FIPAException fe) {
+			fe.printStackTrace();
+		}
+		return selectReceiver(result);
+	}
+
+
+	private AID selectReceiver(DFAgentDescription[] listPotentialReceiver){
+		AID rec = null;
+		if (listPotentialReceiver.length > 0)
+			rec = listPotentialReceiver[0].getName();
+		return rec;
+	}
+
+
+
+
+
+
 }
