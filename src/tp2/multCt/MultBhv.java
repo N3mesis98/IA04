@@ -1,29 +1,28 @@
 package tp2.multCt;
 
+import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.WakerBehaviour;
 import jade.lang.acl.ACLMessage;
 import tp2.ComFactMult;
+
+import java.util.Date;
 
 /**
  * Created by Mar on 07/03/2016.
  */
-public class MultBhv extends Behaviour {
-    private MultAgt parentAgt;
+public class MultBhv extends WakerBehaviour {
+
     private ACLMessage message;
     private int term1;
     private int term2;
 
     private ComFactMult mult;
 
-    public MultBhv(MultAgt parentAgt, ACLMessage message){
-        this.parentAgt = parentAgt;
-        this.message = message;
-    }
-
-    //@Override
-    public void action() {
-        //parseMessage(message.getContent());
-        //Integer result = term1 * term2;
+    @Override
+    protected void onWake() {
+        super.onWake();
+        System.out.println("Wake");
         mult = new ComFactMult();
         mult.deserialisationJSONComFactMult(message.getContent());
         mult.setResult(mult.getTermA()*mult.getTermB());
@@ -32,12 +31,16 @@ public class MultBhv extends Behaviour {
         reply.setPerformative(ACLMessage.INFORM);
         reply.setContent(mult.serialisationJSONComFactMult());
 
-        this.parentAgt.send(reply);
+        this.myAgent.send(reply);
     }
-    //@Override
-    public boolean done() {
-        return true;
+
+
+    public MultBhv(Agent a, long timeout, ACLMessage message){
+        super(a, timeout);
+        this.message = message;
     }
+
+
 
     private void parseMessage(String messageContent) {
         String[] terms = messageContent.split("\\*");
