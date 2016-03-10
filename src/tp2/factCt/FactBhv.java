@@ -1,9 +1,7 @@
 package tp2.factCt;
 
 import jade.core.AID;
-import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
-import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
@@ -11,9 +9,9 @@ import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import tp2.ComFactMult;
-import tp2.multCt.MultBhv;
 
 import java.util.Date;
+import java.util.Random;
 
 
 public class FactBhv extends Behaviour {
@@ -114,17 +112,30 @@ public class FactBhv extends Behaviour {
 		} catch(FIPAException fe) {
 			fe.printStackTrace();
 		}
-		return selectReceiver(result);
+		return selectRandomReceiver(result);
 	}
 
 
-	private AID selectReceiver(DFAgentDescription[] listPotentialReceiver){
+	private AID selectFirstReceiver(DFAgentDescription[] listPotentialReceiver){
 		AID rec = null;
 		if (listPotentialReceiver.length > 0)
 			rec = listPotentialReceiver[0].getName();
 		return rec;
 	}
 
+	/**
+	 * Method that selects pseudo-randomly an Agent between the list
+	 * @param listPotentialReceiver list of Agent from where an Agent has to be picked
+	 * @return the AID of the Agent pseudo randomly selected
+     */
+	private AID selectRandomReceiver(DFAgentDescription[] listPotentialReceiver){
+		AID rec = null;
+		if (listPotentialReceiver.length > 0){
+			Random random = new Random();
+			rec = listPotentialReceiver[random.nextInt(listPotentialReceiver.length)].getName();
+		}
+		return rec;
+	}
 
 
 
