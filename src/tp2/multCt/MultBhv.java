@@ -22,7 +22,6 @@ public class MultBhv extends WakerBehaviour {
     @Override
     protected void onWake() {
         super.onWake();
-        System.out.println("Wake");
         mult = new ComFactMult();
         mult.deserialisationJSONComFactMult(message.getContent());
         mult.setResult(mult.getTermA()*mult.getTermB());
