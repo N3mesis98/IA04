@@ -27,6 +27,8 @@ public class FactBhv extends Behaviour {
 	private String conversationId = null;
 	private boolean isDone = false;
 
+	private AID receiverAgt = null;
+
 	public FactBhv(FactAgt parentAgt, ACLMessage request){
 		this.parentAgt = parentAgt;
 		this.request=request;
@@ -49,7 +51,7 @@ public class FactBhv extends Behaviour {
 				MessageTemplate.MatchPerformative( ACLMessage.INFORM ),
 				MessageTemplate.and(
 					MessageTemplate.MatchConversationId(conversationId),
-					MessageTemplate.MatchSender( getReceiver("Operations", "Multiplication"))
+					MessageTemplate.MatchSender( receiverAgt)
 				)
 			);
 			ACLMessage message = this.parentAgt.receive(mt);
@@ -84,7 +86,8 @@ public class FactBhv extends Behaviour {
 
 	private void sendMult(int a, int b) {
 		ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
-		message.addReceiver(getReceiver("Operations", "Multiplication"));
+		receiverAgt = getReceiver("Operations", "Multiplication");
+		message.addReceiver(receiverAgt);
 		ComFactMult askMult = new ComFactMult(a,b);
 		message.setContent(askMult.serialisationJSONComFactMult());
 		conversationId= ""+new Date().getTime();
