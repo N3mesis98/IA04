@@ -26,8 +26,14 @@ public class MultCt {
             // agents
             AgentController agentCc = ct.createNewAgent("MultAgt", "tp2.multCt.MultAgt", null);
             AgentController agentCc2 = ct.createNewAgent("MultAgt2", "tp2.multCt.MultAgt", null);
+            AgentController agentCc3 = ct.createNewAgent("MultAgt3", "tp2.multCt.MultAgt", null);
+            AgentController agentCc4 = ct.createNewAgent("MultAgt4", "tp2.multCt.MultAgt", null);
+            AgentController agentCc5 = ct.createNewAgent("MultAgt5", "tp2.multCt.MultAgt", null);
             agentCc.start();
             agentCc2.start();
+            agentCc3.start();
+            agentCc4.start();
+            agentCc5.start();
         }
         catch(Exception ex){
 

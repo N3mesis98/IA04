@@ -9,7 +9,7 @@ function launch () {
 	line="----------------------------------------"
 	echo -e "\n$line\n$str\n$line\n"
 	#java -cp ../lib/jade.jar: $(echo %d | sed 's/.*src\///' | tr / .).%e
-	java -cp ../lib/jade.jar: "$1"
+	java -cp ../lib/*: "$1"
 }
 
 
