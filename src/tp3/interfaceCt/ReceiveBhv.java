@@ -55,12 +55,13 @@ public class ReceiveBhv extends Behaviour {
             }
             else {
                 String conversationId = UUID.randomUUID().toString();
-                ACLMessage newMessage = (ACLMessage) message.clone();
+                ACLMessage newMessage = new ACLMessage(ACLMessage.REQUEST);
                 newMessage.setSender(this.parentAgt.getAID());
                 newMessage.clearAllReceiver();
                 newMessage.addReceiver(parentAgt.root);
+                newMessage.setContent(message.getContent());
                 newMessage.setConversationId(conversationId);
-                parentAgt.send(message);
+                parentAgt.send(newMessage);
 
                 parentAgt.addBehaviour(new ResponseBhv(parentAgt, conversationId));
             }

@@ -32,54 +32,138 @@ public class ReceiveBhv extends Behaviour {
             Map list = Message.deserialisationJSON(message.getContent());
             if (list.get(Message.TYPE).equals(Message.TYPE_INSERT)) {
                 // insertion
-                int requestedValue = (int) list.get(Message.REQUEST);
+                int requestedValue = new Integer( list.get(Message.REQUEST).toString());
                 if (requestedValue == parentAgt.value) {
-
-                    // TODO : faire une fonction replyMessage prenant un map en argument
-                    ACLMessage reply = message.createReply();
-                    reply.setPerformative(ACLMessage.INFORM);
-                    list.put(Message.RETURN, 0);
-                    reply.setContent(Message.serialisationJSON(list));
-                    parentAgt.send(reply);
+                    list.put(Message.RETURN, "0");
+                    replyMsg(message, list);
                 }
                 else {
                     if (requestedValue < parentAgt.value) {
                         // left side
                         if (parentAgt.left == null) {
                             // empty left side
-                            String nickname = "NodeAgt"+list.get(Message.REQUEST);
-                            Object[] listArgs = {new Integer(list.get(Message.REQUEST).toString())};
-
                             AgentController agentCc = null;
                             try {
+                                String nickname = "NodeAgt"+list.get(Message.REQUEST);
+                                Object[] listArgs = {new Integer(list.get(Message.REQUEST).toString())};
+
                                 agentCc = parentAgt.getContainerController().createNewAgent(nickname, "tp3.nodeCt.NodeAgt", listArgs);
                                 agentCc.start();
+
                                 parentAgt.left = new AID(nickname, AID.ISLOCALNAME);
+                                list.put(Message.RETURN, "1");
+                                replyMsg(message, list);
                             } catch (StaleProxyException e) {
                                 e.printStackTrace();
                             }
-
-                            ACLMessage reply = message.createReply();
-                            reply.setPerformative(ACLMessage.INFORM);
-                            list.put(Message.RETURN, 1);
-                            reply.setContent(Message.serialisationJSON(list));
-                            parentAgt.send(reply);
                         }
                         else {
                             // not empty left side
+                            ACLMessage newMessage = (ACLMessage) message.clone();
+                            newMessage.setSender(this.parentAgt.getAID());
+                            newMessage.clearAllReceiver();
+                            newMessage.addReceiver(parentAgt.left);
+                            parentAgt.send(newMessage);
+                            parentAgt.addBehaviour(new ResponseBhv(parentAgt, message));
 
                         }
                     }
                     else {
                         // right side
+                        if (parentAgt.right == null) {
+                            // empty right side
+                            AgentController agentCc = null;
+                            try {
+                                String nickname = "NodeAgt"+list.get(Message.REQUEST);
+                                Object[] listArgs = {new Integer(list.get(Message.REQUEST).toString())};
+
+                                agentCc = parentAgt.getContainerController().createNewAgent(nickname, "tp3.nodeCt.NodeAgt", listArgs);
+                                agentCc.start();
+
+                                parentAgt.right = new AID(nickname, AID.ISLOCALNAME);
+                                list.put(Message.RETURN, "1");
+                                replyMsg(message, list);
+                            } catch (StaleProxyException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        else {
+                            // not empty right side
+                            ACLMessage newMessage = (ACLMessage) message.clone();
+                            newMessage.setSender(this.parentAgt.getAID());
+                            newMessage.clearAllReceiver();
+                            newMessage.addReceiver(parentAgt.right);
+                            parentAgt.send(newMessage);
+                            parentAgt.addBehaviour(new ResponseBhv(parentAgt, message));
+
+                        }
                     }
                 }
             }
             else if (list.get(Message.TYPE).equals(Message.TYPE_SEARCH)) {
-
+                //search
+                int requestedValue = new Integer( list.get(Message.REQUEST).toString());
+                if (requestedValue == parentAgt.value) {
+                    list.put(Message.RETURN, "1");
+                    replyMsg(message, list);
+                }
+                else {
+                    if (requestedValue < parentAgt.value) {
+                        // left side
+                        if (parentAgt.left == null) {
+                            // empty left side
+                            list.put(Message.RETURN, "0");
+                            replyMsg(message, list);
+                        } else {
+                            // not empty left side
+                            ACLMessage newMessage = (ACLMessage) message.clone();
+                            newMessage.setSender(this.parentAgt.getAID());
+                            newMessage.clearAllReceiver();
+                            newMessage.addReceiver(parentAgt.left);
+                            parentAgt.send(newMessage);
+                            parentAgt.addBehaviour(new ResponseBhv(parentAgt, message));
+                        }
+                    } else {
+                        // right side
+                        if (parentAgt.right == null) {
+                            // empty right side
+                            list.put(Message.RETURN, "0");
+                            replyMsg(message, list);
+                        } else {
+                            // not empty right side
+                            ACLMessage newMessage = (ACLMessage) message.clone();
+                            newMessage.setSender(this.parentAgt.getAID());
+                            newMessage.clearAllReceiver();
+                            newMessage.addReceiver(parentAgt.right);
+                            parentAgt.send(newMessage);
+                            parentAgt.addBehaviour(new ResponseBhv(parentAgt, message));
+                        }
+                    }
+                }
             }
             else {
-
+                //list
+                if(parentAgt.left==null && parentAgt.right==null){ //leaf
+                    list.put(Message.RETURN, ""+parentAgt.value);
+                    replyMsg(message, list);
+                }
+                else {
+                    if (parentAgt.left!=null){
+                        ACLMessage newMessage = (ACLMessage) message.clone();
+                        newMessage.setSender(this.parentAgt.getAID());
+                        newMessage.clearAllReceiver();
+                        newMessage.addReceiver(parentAgt.left);
+                        parentAgt.send(newMessage);
+                    }
+                    if (parentAgt.right!=null){
+                        ACLMessage newMessage = (ACLMessage) message.clone();
+                        newMessage.setSender(this.parentAgt.getAID());
+                        newMessage.clearAllReceiver();
+                        newMessage.addReceiver(parentAgt.right);
+                        parentAgt.send(newMessage);
+                    }
+                    parentAgt.addBehaviour(new ResponseBhv(parentAgt, message));
+                }
             }
         }
         else {
@@ -90,5 +174,15 @@ public class ReceiveBhv extends Behaviour {
     @Override
     public boolean done() {
         return false;
+    }
+
+
+    private void replyMsg(ACLMessage message, Map listContent){
+
+        ACLMessage reply = message.createReply();
+        reply.setPerformative(ACLMessage.INFORM);
+        reply.setContent(Message.serialisationJSON(listContent));
+        parentAgt.send(reply);
+
     }
 }

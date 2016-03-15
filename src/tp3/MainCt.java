@@ -1,8 +1,11 @@
 package tp3;
 
+import jade.core.AID;
 import jade.core.Profile;
 import jade.core.ProfileImpl;
 import jade.core.Runtime;
+import jade.domain.introspection.AMSSubscriber;
+import jade.lang.acl.ACLMessage;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
@@ -40,4 +43,6 @@ public class MainCt {
 			
 		}
 	}
+
+
 }
