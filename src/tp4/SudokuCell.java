@@ -9,6 +9,7 @@ import java.util.Set;
  */
 public class SudokuCell {
 
+    public int value = 0;
     public Set<Integer> possibilities =  new HashSet<>();
     public int line;
     public int row;
@@ -16,7 +17,7 @@ public class SudokuCell {
     public SudokuCell(int value, int line, int row) {
         this.possibilities = new HashSet<>();
         if (value>=1 && value<=9) {
-            this.possibilities.add(value);
+            this.value = value;
         }
         this.line = line;
         this.row = row;

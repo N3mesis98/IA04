@@ -24,8 +24,8 @@ public class SudokuSubSet {
     public Set<Integer> availableInt(){
         Set<Integer> list = new HashSet<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9));
         for (SudokuCell i : subSet){
-            if (i.possibilities.size() == 1) {
-                list.removeAll(i.possibilities);
+            if (i.value != 0) {
+                list.remove(i.value);
             }
         }
         return list;

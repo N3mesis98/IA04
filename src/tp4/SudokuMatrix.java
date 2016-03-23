@@ -7,6 +7,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by Mar on 21/03/2016.
@@ -65,6 +66,17 @@ public class SudokuMatrix {
             }
         }
         return new SudokuSubSet(square);
+    }
+
+    public void initialisePossibilities() {
+        for (int i=0; i<9; i++) {
+            for (int j=0; j<9; j++) {
+                Set<Integer> linep = this.getLine(i).availableInt();
+                Set<Integer> rowp = this.getRow(j).availableInt();
+                Set<Integer> squarep = this.getSquare((i/3)*3 + j/3).availableInt();
+                this.sudoku[i][j].intersection(linep, rowp, squarep);
+            }
+        }
     }
 
 }
