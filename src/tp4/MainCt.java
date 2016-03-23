@@ -25,7 +25,7 @@ public class MainCt {
             agentCc.start();
         }
         catch(Exception ex){
-            
+            ex.printStackTrace();
         }
     }
 

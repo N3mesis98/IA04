@@ -34,7 +34,8 @@ if [ "$?" -eq 0 ]; then
         "tp4")
             launch "tp4.MainCt" &
             read -r
-            launch "tp4.analyseCt.AnalyseCt" 27
+            launch "tp4.analyseCt.AnalyseCt" 10 &
+            launch "tp4.analyseCt.AnalyseCt" 17
             ;;
         *)
             echo "Error: Unknown target"

@@ -6,6 +6,8 @@ import jade.core.Runtime;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 
+import java.util.UUID;
+
 /**
  * Created by Mar on 23/03/2016.
  */
@@ -33,7 +35,8 @@ public class AnalyseCt {
             }
             
             for (int i=0; i<nbagt; i++) {
-                AgentController agentCc = ct.createNewAgent("AnalyseAgt"+i, "tp4.analyseCt.AnalyseAgt", null);
+                String[] splitedUUID = UUID.randomUUID().toString().split("-");
+                AgentController agentCc = ct.createNewAgent("AnalyseAgt"+splitedUUID[splitedUUID.length-1], "tp4.analyseCt.AnalyseAgt", null);
                 agentCc.start();
             }
         }
