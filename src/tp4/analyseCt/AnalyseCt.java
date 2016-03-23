@@ -21,21 +21,24 @@ public class AnalyseCt {
             ContainerController ct = rt.createAgentContainer(profile);
 
             // create n agents
-            int nbagt = 1;
-            try {
-                nbagt = Integer.parseInt(args[0]);
-            } catch (NumberFormatException e) {
-                System.err.println("Argument" + args[0] + " must be an integer");
-                System.exit(1);
+            int nbagt;
+            if (args.length > 0) {
+                nbagt = new Integer(args[0]);
+                if (nbagt < 1) {
+                    nbagt = 1;
+                }
             }
-
+            else {
+                nbagt = 1;
+            }
+            
             for (int i=0; i<nbagt; i++) {
-                AgentController agentCc = ct.createNewAgent("AnalyseAgt", "tp4.analyseCt.AnalyseAgt", null);
+                AgentController agentCc = ct.createNewAgent("AnalyseAgt"+i, "tp4.analyseCt.AnalyseAgt", null);
                 agentCc.start();
             }
         }
         catch(Exception ex){
-
+            System.out.println(ex);
         }
     }
 }

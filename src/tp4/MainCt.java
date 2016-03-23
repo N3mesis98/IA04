@@ -8,24 +8,26 @@ import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 
 public class MainCt {
-	public static String MAIN_CONF = "tp4/MainCt.conf";
+    public static String MAIN_CONF = "tp4/MainCt.conf";
 
-	public static void main(String[] args) {
-		Runtime rt = Runtime.instance();
-		try{
-			// main container
-			Profile mainProfile = null;
-			mainProfile = new ProfileImpl(MAIN_CONF);
-			AgentContainer mainContainer = rt.createMainContainer(mainProfile);
+    public static void main(String[] args) {
+        Runtime rt = Runtime.instance();
+        try{
+            // main container
+            Profile mainProfile = null;
+            mainProfile = new ProfileImpl(MAIN_CONF);
+            AgentContainer mainContainer = rt.createMainContainer(mainProfile);
 
-			// import matrix from file
-			SudokuMatrix sudoku = new SudokuMatrix();
-			sudoku.importFromFile("res/grille1.txt");
-		}
-		catch(Exception ex){
-			
-		}
-	}
+            AgentController agentCc = mainContainer.createNewAgent("EnvAgt", "tp4.envAgt.EnvAgt", null);
+            agentCc.start();
+            
+            agentCc = mainContainer.createNewAgent("SimuAgt", "tp4.simuAgt.SimuAgt", null);
+            agentCc.start();
+        }
+        catch(Exception ex){
+            
+        }
+    }
 
 
 }

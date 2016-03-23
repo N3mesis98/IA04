@@ -38,6 +38,5 @@ public class MultAgt extends Agent {
         } catch (FIPAException e) {
             e.printStackTrace();
         }
-
     }
 }
