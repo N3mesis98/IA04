@@ -1,6 +1,5 @@
 package tp4;
 
-
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
@@ -9,22 +8,17 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+
 /**
  * Created by Mar on 21/03/2016.
  */
 public class SudokuMatrix {
 
     public SudokuCell[][] sudoku = new SudokuCell[9][9];
-
-    /*public void display(){
-        for (int[] i : sudoku){
-            for (int j : i){
-                System.out.print(j+" ");
-            }
-            System.out.println("\n");
-        }
-    }*/
-
 
     public void importFromFile(String path){
         try {
@@ -77,6 +71,30 @@ public class SudokuMatrix {
                 this.sudoku[i][j].intersection(linep, rowp, squarep);
             }
         }
+    }
+    
+    public String serializeJSON () {
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonString = null;
+        
+        try {
+            jsonString = mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return jsonString;
+    }
+    
+    public static SudokuMatrix deserializeJSON (String serialized) {
+        ObjectMapper mapper = new ObjectMapper();
+        SudokuMatrix sudoku = null;
+
+        try {
+            sudoku = mapper.readValue(serialized, SudokuMatrix.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return sudoku;
     }
 
 }
