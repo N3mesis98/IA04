@@ -4,8 +4,14 @@ import jade.core.Agent;
 import jade.core.AID;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 
+import java.util.Map;
+import java.util.HashMap;
+
+import tp4.SudokuMatrix;
 import utilities.Services;
+import utilities.JSON;
 
 public class InitBhv extends Behaviour {
     private SimuAgt parentAgt;
@@ -16,9 +22,20 @@ public class InitBhv extends Behaviour {
     }
 
     public void action() {
-        // attente d'une request puis initialisation de la matrice des possibles
+        // attente d'une requete puis initialisation de la matrice des possibles
+        MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
+        ACLMessage message = parentAgt.receive(mt);
+        if (message != null) {
+            Map<String, String> map = JSON.deserializeStringMap(message.getContent());
+            parentAgt.sudoku = SudokuMatrix.deserializeJSON(map.get("data"));
+            
+            // TODO: calcul de la matrice des possibles
+        }
+        else {
+            block();
+        }
         
-        // initialisation de la liste des agent d'analyse
+        // initialisation de la liste des agents d'analyse
         if (parentAgt.analyseAgtList[0]==null) {
             AID[] serviceList = Services.getAgentsByService(parentAgt, "Operations","AnalyseSudoku");
             
@@ -29,9 +46,9 @@ public class InitBhv extends Behaviour {
             }
         }
         
-        if (parentAgt.analyseAgtList[0]!=null /*&& matrice des possibles initialisée*/) {
+        if (parentAgt.analyseAgtList[0]!=null && parentAgt.sudoku!=null) {
             isDone = true;
-            // demarre le nouveau bhv
+            // TODO: demarre le nouveau bhv
         }
     }
 

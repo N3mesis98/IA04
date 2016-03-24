@@ -3,14 +3,15 @@ package tp4.simuAgt;
 import jade.core.Agent;
 import jade.core.AID;
 
-import tp4.SudokuCell;
 import tp4.SudokuMatrix;
-import tp4.SudokuSubSet;
+import utilities.Services;
 
 public class SimuAgt extends Agent {
     public AID[] analyseAgtList = new AID[27];
+    public SudokuMatrix sudoku = null;
     
     protected void setup() {
+        Services.registerService(this, "Operations", "SimulationSudoku");
         addBehaviour(new InitBhv(this));
     }
 }

@@ -1,22 +1,16 @@
 package tp4.envAgt;
 
 import jade.core.Agent;
+import jade.core.AID;
 
-import tp4.SudokuCell;
 import tp4.SudokuMatrix;
-import tp4.SudokuSubSet;
-
-import utilities.JSON;
-
-import java.util.Map;
-import java.util.HashMap;
 
 public class EnvAgt extends Agent {
-    public SudokuMatrix sudoku = new SudokuMatrix();
+    public String SUDOKU_FILE = "../res/grille1.txt";
+    public SudokuMatrix sudoku = null;
+    public AID simuAgt = null;
     
     protected void setup() {
-        sudoku.importFromFile("../res/grille1.txt");
-        String str = sudoku.serializeJSON();
-        //addBehaviour(new ContactBhv(this));
+        addBehaviour(new InitBhv(this));
     }
 }
