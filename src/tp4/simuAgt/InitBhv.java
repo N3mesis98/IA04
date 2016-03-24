@@ -1,13 +1,11 @@
 package tp4.simuAgt;
 
 import jade.core.Agent;
-import jade.core.behaviours.Behaviour;
 import jade.core.AID;
+import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
-import jade.domain.DFService;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
-import jade.domain.FIPAException;
+
+import utilities.Services;
 
 public class InitBhv extends Behaviour {
     private SimuAgt parentAgt;
@@ -22,23 +20,11 @@ public class InitBhv extends Behaviour {
         
         // initialisation de la liste des agent d'analyse
         if (parentAgt.analyseAgtList[0]==null) {
-            DFAgentDescription[] serviceList = null;
-        
-            DFAgentDescription template = new DFAgentDescription();
-            ServiceDescription sd = new ServiceDescription();
-            sd.setType("Operations");
-            sd.setName("AnalyseSudoku");
-            template.addServices(sd);
-            
-            try {
-                serviceList = DFService.search(parentAgt, template);
-            } catch(FIPAException fe) {
-                fe.printStackTrace();
-            }
+            AID[] serviceList = Services.getAgentsByService(parentAgt, "Operations","AnalyseSudoku");
             
             if (serviceList.length>=27) {
                 for (int i=0; i<27; i++) {
-                    parentAgt.analyseAgtList[i] = serviceList[i].getName();
+                    parentAgt.analyseAgtList[i] = serviceList[i];
                 }
             }
         }
