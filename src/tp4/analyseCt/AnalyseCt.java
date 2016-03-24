@@ -36,7 +36,7 @@ public class AnalyseCt {
             
             for (int i=0; i<nbagt; i++) {
                 String[] splitedUUID = UUID.randomUUID().toString().split("-");
-                AgentController agentCc = ct.createNewAgent("AnalyseAgt"+splitedUUID[splitedUUID.length-1], "tp4.analyseCt.AnalyseAgt", null);
+                AgentController agentCc = ct.createNewAgent("AnalyseAgt-"+splitedUUID[0], "tp4.analyseCt.AnalyseAgt", null);
                 agentCc.start();
             }
         }
