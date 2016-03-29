@@ -72,7 +72,16 @@ public class SudokuMatrix {
             }
         }
     }
-    
+
+    public void display(){
+        for(int i=0; i < sudoku.length ; i++){
+            for(int j=0; j < sudoku[i].length ; j++){
+                System.out.print(sudoku[i][j].value+" ");
+            }
+            System.out.println();
+        }
+    }
+
     public String serializeJSON () {
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = null;
@@ -95,6 +104,22 @@ public class SudokuMatrix {
             e.printStackTrace();
         }
         return sudoku;
+    }
+
+    public String isComplete() {
+        for (int i=0; i<sudoku.length; i++) {
+            for (SudokuCell cell : sudoku[i]) {
+                if (cell.value<1 || cell.value>9) {
+                    if (cell.possibilities.size() == 0) {
+                        return "impossible";
+                    }
+                    else {
+                        return "incomplete";
+                    }
+                }
+            }
+        }
+        return "complete";
     }
 
 }

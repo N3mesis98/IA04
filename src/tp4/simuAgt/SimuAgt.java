@@ -7,6 +7,8 @@ import tp4.SudokuMatrix;
 import utilities.Services;
 
 public class SimuAgt extends Agent {
+    public long tickTime = 1000;
+    public AID envAID = null;
     public AID[] analyseAgtList = new AID[27];
     public SudokuMatrix sudoku = null;
     

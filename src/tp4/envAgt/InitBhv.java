@@ -47,11 +47,12 @@ public class InitBhv extends Behaviour {
         
         if (parentAgt.sudoku != null && parentAgt.simuAgt != null) {
             isDone = true;
-            // TODO: demarre le nouveau bhv
+            parentAgt.addBehaviour(new ReceiveBhv(parentAgt));
         }
     }
 
     public boolean done() {
         return isDone;
     }
+
 }
