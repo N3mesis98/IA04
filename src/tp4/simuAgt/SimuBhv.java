@@ -69,6 +69,7 @@ public class SimuBhv extends Behaviour{
                 }
                 parentAgt.sudoku.sudoku[cell.line][cell.row].possibilities.retainAll(cell.possibilities);
 
+
                 tickerBhv.modified = true;
 
                 if (cell.value>=1 && cell.value<=9) {

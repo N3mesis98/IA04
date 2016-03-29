@@ -28,6 +28,13 @@ public class SudokuSubSet {
         return list;
     }
 
+    public void displayPossibleSubSet(){
+        for (SudokuCell i : subSet){
+            System.out.print(i.possibleValues()+" ");
+        }
+        System.out.println();
+    }
+
     public String serializeJSON () {
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = null;

@@ -67,4 +67,19 @@ public class SudokuCell {
         }
         return cell;
     }
+
+    public String possibleValues(){
+        int nbElement = 9-this.possibilities.size();
+        String result = "";
+        result = result+""+this.value+" (";
+        for(int i : this.possibilities){
+            result = result+i+",";
+        }
+        for(int i = 0; i< nbElement ;i++){
+            result = result+"."+",";
+        }
+        result = result+")";
+        return result;
+
+    }
 }

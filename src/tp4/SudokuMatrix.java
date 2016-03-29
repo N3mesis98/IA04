@@ -81,6 +81,15 @@ public class SudokuMatrix {
             System.out.println();
         }
     }
+    public void displayPossibleMatrix(){
+        for(int i=0; i < sudoku.length ; i++){
+            for(int j=0; j < sudoku[i].length ; j++){
+                System.out.print(sudoku[i][j].possibleValues()+" ");
+            }
+            System.out.println();
+        }
+    }
+
 
     public String serializeJSON () {
         ObjectMapper mapper = new ObjectMapper();

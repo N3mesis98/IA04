@@ -27,7 +27,7 @@ public class ReceiveBhv extends Behaviour {
             Map<String, String> map = JSON.deserializeStringMap(message.getContent());
             if (map.containsKey("data")) {
                 SudokuCell cell = SudokuCell.deserializeJSON(map.get("data"));
-                parentAgt.sudoku.sudoku[cell.line][cell.row] = cell;
+                parentAgt.sudoku.sudoku[cell.line][cell.row] =  cell;
                 System.out.println("cell "+cell.line+", "+cell.row+" to "+cell.value);
             }
 

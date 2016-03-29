@@ -33,6 +33,8 @@ public class InitBhv extends Behaviour {
                 Map<String, String> map = JSON.deserializeStringMap(message.getContent());
                 parentAgt.sudoku = SudokuMatrix.deserializeJSON(map.get("data"));
                 parentAgt.sudoku.initialisePossibilities();
+                System.out.println("Initialisation possible matrix");
+                parentAgt.sudoku.displayPossibleMatrix();
             } else {
                 block();
             }
