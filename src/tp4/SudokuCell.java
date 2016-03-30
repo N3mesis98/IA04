@@ -39,9 +39,11 @@ public class SudokuCell {
     public SudokuCell() {} // dummy constructor
 
     public void intersection(Set<Integer> line, Set<Integer>  row, Set<Integer> square) {
-        line.retainAll(row);
-        line.retainAll(square);
-        possibilities = line;
+        if (value<1 || value>9) {
+            line.retainAll(row);
+            line.retainAll(square);
+            possibilities = line;
+        }
     }
     
     public String serializeJSON () {
@@ -73,10 +75,10 @@ public class SudokuCell {
         String result = "";
         result = result+""+this.value+" (";
         for(int i : this.possibilities){
-            result = result+i+",";
+            result = result+i;
         }
         for(int i = 0; i< nbElement ;i++){
-            result = result+"."+",";
+            result = result+".";
         }
         result = result+")";
         return result;

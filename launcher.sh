@@ -5,7 +5,7 @@
 # functions
 #------------------------------
 function launch () {
-    java -cp ../lib/*: $@
+    java -cp lib/*:bin/: $@
 }
 
 
@@ -15,7 +15,6 @@ function launch () {
 cd "$(dirname $0)"
 make
 if [ "$?" -eq 0 ]; then
-    cd "$(dirname $0)/bin"
     case $1 in
         "tp1")
             launch "tp1.MainCt" &
@@ -34,8 +33,7 @@ if [ "$?" -eq 0 ]; then
         "tp4")
             launch "tp4.MainCt" &
             read -r
-            launch "tp4.analyseCt.AnalyseCt" 10 &
-            launch "tp4.analyseCt.AnalyseCt" 17
+            launch "tp4.analyseCt.AnalyseCt" 27
             ;;
         *)
             echo "Error: Unknown target"

@@ -80,6 +80,7 @@ public class SudokuMatrix {
             }
             System.out.println();
         }
+        System.out.println();
     }
     public void displayPossibleMatrix(){
         for(int i=0; i < sudoku.length ; i++){
@@ -88,6 +89,7 @@ public class SudokuMatrix {
             }
             System.out.println();
         }
+        System.out.println();
     }
 
 

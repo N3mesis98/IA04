@@ -27,48 +27,61 @@ public class AnalyseBhv extends Behaviour {
 
     @Override
     public void action() {
-        SudokuCell cell = subset.subSet[currentElement];
+        if (currentElement<9) {
+            SudokuCell cell = subset.subSet[currentElement];
 
-        if (cell.possibilities.size() == 1) {
-            cell.value = cell.possibilities.toArray(new Integer[0])[0];
-            for (SudokuCell curCell : subset.subSet) {
-                if (curCell.possibilities.remove(cell.value)) {
-                    sendCellUpdate(curCell);
-                }
-            }
-        }
-
-        Map<Integer, SudokuCell> map = new HashMap<>();
-        for (Integer i : cell.possibilities) {
-            map.put(i, null);
-        }
-        for (SudokuCell curCell : subset.subSet) {
-            if (curCell != cell) {
-                for (Integer i : curCell.possibilities) {
-                    if (map.containsKey(i)) {
-                        if (map.get(i) == null) {
-                            map.put(i, curCell);
-                        }
-                        else {
-                            map.remove(i);
-                        }
-                    }
-                }
-            }
-        }
-
-        for (int i : map.keySet()) {
-            if (map.get(i) == null) {
+            if (cell.possibilities.size() == 1) {
                 cell.value = cell.possibilities.toArray(new Integer[0])[0];
+                cell.possibilities.clear();
+                sendCellUpdate(cell);
+            }
+            
+            if (cell.value>=1 && cell.value<=9) {
                 for (SudokuCell curCell : subset.subSet) {
                     if (curCell.possibilities.remove(cell.value)) {
                         sendCellUpdate(curCell);
                     }
                 }
             }
-            //else {
-            //
-            //}
+
+            Map<Integer, SudokuCell> map = new HashMap<>();
+            for (Integer i : cell.possibilities) {
+                map.put(i, null);
+            }
+            for (SudokuCell curCell : subset.subSet) {
+                if (curCell != cell) {
+                    if (curCell.value>=1 && curCell.value<=9) {
+                        if (map.containsKey(curCell.value)) {
+                            map.remove(curCell.value);
+                        }
+                    }
+                    else {
+                        for (Integer i : curCell.possibilities) {
+                            if (map.containsKey(i)) {
+                                if (map.get(i) == null) {
+                                    map.put(i, curCell);
+                                }
+                                else {
+                                    map.remove(i);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            for (int i : map.keySet()) {
+                if (map.get(i) == null) {
+                    cell.value = i;
+                    cell.possibilities.clear();
+                    sendCellUpdate(cell);
+                }
+                //else {
+                
+                //}
+            }
+            
+            currentElement++;
         }
     }
 

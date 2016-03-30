@@ -33,8 +33,6 @@ public class InitBhv extends Behaviour {
                 Map<String, String> map = JSON.deserializeStringMap(message.getContent());
                 parentAgt.sudoku = SudokuMatrix.deserializeJSON(map.get("data"));
                 parentAgt.sudoku.initialisePossibilities();
-                System.out.println("Initialisation possible matrix");
-                parentAgt.sudoku.displayPossibleMatrix();
             } else {
                 block();
             }
@@ -44,9 +42,9 @@ public class InitBhv extends Behaviour {
         if (parentAgt.analyseAgtList[0]==null) {
             AID[] serviceList = Services.getAgentsByService(parentAgt, "Operations","AnalyseSudoku");
 
-            if (serviceList.length > 0) {
-                for (int i=0; i<serviceList.length; i++) {
-                    parentAgt.analyseAgtList[i] = serviceList[i%serviceList.length];
+            if (serviceList.length >= 27) {
+                for (int i=0; i<27; i++) {
+                    parentAgt.analyseAgtList[i] = serviceList[i];
                 }
             }
             else {

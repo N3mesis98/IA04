@@ -23,6 +23,8 @@ public class TickerBhv extends TickerBehaviour {
 
     @Override
     protected void onTick() {
+        System.out.println("tick");
+        
         if (simuBhv != null) {
             simuBhv.stop();
         }
