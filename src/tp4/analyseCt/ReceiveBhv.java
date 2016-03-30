@@ -29,7 +29,8 @@ public class ReceiveBhv extends CyclicBehaviour{
             if(message.getPerformative()==ACLMessage.REQUEST){
                 parentAgt.simuAID = message.getSender();
                 Map<String, String> map = JSON.deserializeStringMap(message.getContent());
-                parentAgt.addBehaviour(new AnalyseBhv(parentAgt, SudokuSubSet.deserializeJSON(map.get("data"))));
+                analyseBhv = new AnalyseBhv(parentAgt, SudokuSubSet.deserializeJSON(map.get("data")));
+                parentAgt.addBehaviour(analyseBhv);
             }
             else if (analyseBhv != null) {
                 parentAgt.removeBehaviour(analyseBhv);

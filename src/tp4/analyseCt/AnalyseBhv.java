@@ -80,6 +80,9 @@ public class AnalyseBhv extends Behaviour {
             
             currentElement++;
         }
+        else {
+            isDone = true;
+        }
     }
 
     @Override
