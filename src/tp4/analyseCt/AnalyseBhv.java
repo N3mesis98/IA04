@@ -29,13 +29,32 @@ public class AnalyseBhv extends Behaviour {
     public void action() {
         if (currentElement<9) {
             SudokuCell cell = subset.subSet[currentElement];
-
+            
+            // lorsqu'une  cellule  n'a  plus  qu'une  valeur  possible,
+            // celle-ci  en  devient  son contenu et la liste des possibles est vidée
             if (cell.possibilities.size() == 1) {
                 cell.value = cell.possibilities.toArray(new Integer[0])[0];
                 cell.possibilities.clear();
                 sendCellUpdate(cell);
             }
             
+            // une valeur ne se trouvant que dans une seule liste de possibles
+            // est la valeur de cette cellule
+            Set<Integer> set = new HashSet(cell.possibilities);
+            for (SudokuCell curCell : subset.subSet) {
+                if (curCell != cell) {
+                    set.remove(curCell.value);
+                    set.removeAll(curCell.possibilities);
+                }
+            }
+            if (set.size() > 0) { // set.size() ne peut jamais être plus grand que 1
+                cell.value = set.toArray(new Integer[0])[0];
+                cell.possibilities.clear();
+                sendCellUpdate(cell);
+            }
+            
+            // si une cellule a un contenu déterminé alors il doit
+            // être retiré des possibles de toutes les autres cellules non déterminées
             if (cell.value>=1 && cell.value<=9) {
                 for (SudokuCell curCell : subset.subSet) {
                     if (curCell.possibilities.remove(cell.value)) {
@@ -43,43 +62,9 @@ public class AnalyseBhv extends Behaviour {
                     }
                 }
             }
-
-            Map<Integer, SudokuCell> map = new HashMap<>();
-            for (Integer i : cell.possibilities) {
-                map.put(i, null);
-            }
-            for (SudokuCell curCell : subset.subSet) {
-                if (curCell != cell) {
-                    if (curCell.value>=1 && curCell.value<=9) {
-                        if (map.containsKey(curCell.value)) {
-                            map.remove(curCell.value);
-                        }
-                    }
-                    else {
-                        for (Integer i : curCell.possibilities) {
-                            if (map.containsKey(i)) {
-                                if (map.get(i) == null) {
-                                    map.put(i, curCell);
-                                }
-                                else {
-                                    map.remove(i);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            for (int i : map.keySet()) {
-                if (map.get(i) == null) {
-                    cell.value = i;
-                    cell.possibilities.clear();
-                    sendCellUpdate(cell);
-                }
-                //else {
-                
-                //}
-            }
+            
+            // si  seulement  deux  cellules  contiennent  les  deux mêmes  valeurs  possibles 
+            // alors les possibles des autres cellules ne peuvent contenir ces valeurs
             
             currentElement++;
         }
