@@ -65,6 +65,18 @@ public class AnalyseBhv extends Behaviour {
             
             // si  seulement  deux  cellules  contiennent  les  deux mêmes  valeurs  possibles 
             // alors les possibles des autres cellules ne peuvent contenir ces valeurs
+            if (cell.possibilities.size() == 2) {
+                for (SudokuCell curCell : subset.subSet) {
+                    if (cell!=curCell && cell.possibilities.equals(curCell.possibilities)) {
+                        for (SudokuCell curCell2 : subset.subSet) {
+                            if (curCell2!=cell && curCell2!=curCell) {
+                                curCell2.possibilities.removeAll(cell.possibilities);
+                                sendCellUpdate(curCell2);
+                            }
+                        }
+                    }
+                }
+            }
             
             currentElement++;
         }
