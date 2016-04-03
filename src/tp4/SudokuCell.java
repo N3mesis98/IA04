@@ -22,10 +22,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
  */
 public class SudokuCell {
 
-    public int value = 0;
-    public Set<Integer> possibilities =  new HashSet<>();
+    public int value = 0;// value of the Cell
+    public Set<Integer> possibilities =  new HashSet<>();//Values possible for the Cell
     public int line;
     public int row;
+
 
     public SudokuCell(int value, int line, int row) {
         this.possibilities = new HashSet<>();
@@ -38,6 +39,13 @@ public class SudokuCell {
     
     public SudokuCell() {} // dummy constructor
 
+    /**
+     * Method to make the intersection between possible values for the line, the row and the square the Cell belongs to.
+     * The intersection is done only if the Cell has no value (which corresponds to 0)
+     * @param line Set<Integer> values possible of its line
+     * @param row Set<Integer> values possible of its row
+     * @param square Set<Integer> values possible of its square
+     */
     public void intersection(Set<Integer> line, Set<Integer>  row, Set<Integer> square) {
         if (value<1 || value>9) {
             line.retainAll(row);
@@ -45,7 +53,11 @@ public class SudokuCell {
             possibilities = line;
         }
     }
-    
+
+    /**
+     * Method to serialize the cell into a String
+     * @return
+     */
     public String serializeJSON () {
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = null;
@@ -57,7 +69,12 @@ public class SudokuCell {
         }
         return jsonString;
     }
-    
+
+    /**
+     * Method to get a serialized Cell from a String
+     * @param serialized
+     * @return
+     */
     public static SudokuCell deserializeJSON (String serialized) {
         ObjectMapper mapper = new ObjectMapper();
         SudokuCell cell = null;
@@ -70,6 +87,10 @@ public class SudokuCell {
         return cell;
     }
 
+    /**
+     * Method to display the possible of a Cell
+     * @return String containing the value and its possible values
+     */
     public String possibleValues(){
         int nbElement = 9-this.possibilities.size();
         String result = "";
