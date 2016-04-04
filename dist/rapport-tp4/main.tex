@@ -18,13 +18,10 @@
 
 \newpage
 \section{Description des agents}
-% agents d'analyse -> réactif
-% agents d'envt -> réactif
-% agents de simu -> délibératif sauf durant la phase d'initialisation
 Le système de résolution de sudoku utilise trois types d'agents :
 \begin{itemize}
 \item EnvAgt : L'agent d'environnement est chargé, à son initialisation, de lire une grille de sudoku, d'attendre sa résolution et d'afficher le résultat.
-\item SimuAgt : L'agent de simulation réalise les différentes étapes nécessaire à la potentielle résolution de la grille.
+\item SimuAgt : L'agent de simulation réalise les différentes étapes nécessaires à la potentielle résolution de la grille.
 L'algorithme utilisé ne peut résoudre que des grilles de sudoku déterministes.
 \item AnalyseAgt : Chaque agent d'analyse étudie un sous-ensemble de la matrice (ligne, colonne ou carré) et cherche à faire des déductions utiles pour la résolution du problème, qui sont transmises à l'agent de simulation. 
 \end{itemize}
@@ -74,7 +71,10 @@ Remarque : Tous les messages sont envoyés au format JSON. Le champ 'data' conti
 \section{Conclusion}
 Afin de pouvoir effectuer le traitement de plusieurs matrices simultanément, il faudrait utiliser des identifiants de conversations dans les messages. 
 
-%Il est actuellement possible de gérer des agents d'analyse qui se situent sur différentes stations 
+Nous avons fait en sorte qu'il soit nécessaire de passer un argument, indiquant le nombre d'agent à créer, au lancement du conteneur d'agent d'analyse.
+Il ne manquerait donc plus qu'à indiquer dans le fichier de configuration de ces conteneur l'adresse de la machine du réseau exécutant le conteneur principal pour avoir des agents d'analyse capable de fonctionner sur des stations différentes.
+
+Pour prendre en compte la mort éventuelle d'un agent d'analyse au milieu de l'exécution, on pourrait, à chaque itération du TickerBhv, faire une nouvelle requête au DF et sélectionner 27 agents d'analyse.
 
 % - traitement de plusieurs matrices --> ajout de conversation id
 % - agents d'analyse sur différentes stations --> déjà fait
