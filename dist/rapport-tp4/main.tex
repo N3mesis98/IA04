@@ -17,5 +17,66 @@
 \input{src/titlepage}
 
 \newpage
+\section{Description des agents}
+% agents d'analyse -> réactif
+% agents d'envt -> réactif
+% agents de simu -> délibératif sauf durant la phase d'initialisation
+Le système de résolution de sudoku utilise trois types d'agents :
+\begin{itemize}
+\item EnvAgt : L'agent d'environnement est chargé, à son initialisation, de lire une grille de sudoku, d'attendre sa résolution et d'afficher le résultat.
+\item SimuAgt : L'agent de simulation réalise les différentes étapes nécessaire à la potentielle résolution de la grille.
+L'algorithme utilisé ne peut résoudre que des grilles de sudoku déterministes.
+\item AnalyseAgt : Chaque agent d'analyse étudie un sous-ensemble de la matrice (ligne, colonne ou carré) et cherche à faire des déductions utiles pour la résolution du problème, qui sont transmises à l'agent de simulation. 
+\end{itemize}
 
+\section{Description des comportements}
+\subsection{Agent d'environnement}
+L'agent d'environnement possède deux comportements :
+\begin{itemize}
+\item InitBhv : À l'initialisation, l'agent charge une grille de sudoku depuis un fichier et la transmet à l'agent de simulation.
+\item ReceiveBhv : Il attend ensuite, de manière cyclique, des messages de l'agent de simulation concernant l'état de la matrice et la résolution du problème. 
+\end{itemize}
+L'agent d'environnement est de type réactif car il ne fait qu'attendre des évènements externes auxquels il réagit.
+
+\subsection{Agent d'analyse}
+L'agent d'analyse possède deux comportements justifiant son statut d'agent réactif :
+\begin{itemize}
+\item ReceiveBhv : Le premier comportement est cyclique et présent en permanence. Il est chargé de recevoir des requêtes de la part de l'agent de simulation, contenant un sous-ensemble de la grille à analyser, et de lancer la procédure d'analyse de cette sous-partie.
+\item AnalyseBhv : Le comportement d'analyse parcours, à chaque fois qu'il est appelé par l'agent, une case du sous-ensemble et réalise des déductions en utilisant les algorithmes donnés dans l'énoncé qui sont ensuite transmises à l'agent de simulation.
+\end{itemize}
+
+\subsection{Agent de simulation}
+L'agent de simulation possède trois comportements :
+\begin{itemize}
+\item InitBhv : Lors de l'initialisation, la matrice des possibilités est calculée à partir de la matrice lue et envoyé par l'agent d'environnement.
+Une demande est effectuée auprès du DF pour récupérer 27 agents d'analyse.
+\item TickerBhv : Un TickerBehaviour qui arrête à chaque itération le comportement de simulation en cours, et détermine l'état de résolution de la matrice.
+Si la matrice est complète ou impossible à résoudre pour l'agent de simulation, un message est envoyé à l'agent d'environnement.
+Sinon, un nouveau comportement de simulation est lancé.
+\item SimuBhv : Ce comportement réparti les sous-ensembles à traiter aux différents agents d'analyse. 
+Lorsque une modification est réalisée par un agent d'analyse, la matrice de l'agent de simulation est mise à jour. L'arrêt de ce comportement par le TickerBhv provoque l'envoi de messages CANCEL aux différents agents d'analyse pour que ces derniers arrêtent leur traitement.
+\end{itemize}
+L'agent peut-être considéré comme hybride, même si seule sa phase d'initialisation est réactive.
+
+\section{Descriptions des messages}
+\begin{framed}
+Remarque : Tous les messages sont envoyés au format JSON. Le champ 'data' contient une cellule, un sous-ensemble ou la grille complète de sudoku sérialisé en JSON. Le champ 'end' prend la valeur 'complete' si le sudoku est résolu, 'incomplete' si la grille ne peut pas être résolue de manière déterministe et 'impossible' si la matrice n'admet aucune solution.
+\end{framed}
+\begin{itemize}
+\item Envoi d'un message REQUEST contenant la matrice de sudoku lue de l'agent d'environnement à l'agent de simulation.
+\item Envoi d'un message INFORM contenant la cellule modifiée d'un agent d'analyse à l'agent de simulation.
+\item Envoi d'un message REQUEST contenant un sous-ensemble de cellules à traiter de l'agent de simulation à chaque agent d'analyse.
+\item Envoi d'un message CANCEL de l'agent de simulation à chaque agent d'analyse pour indiquer la fin d'une itération du TickerBhv et l'arrêt des traitements en cours.
+\item Envoi d'un message INFORM contenant une cellule à laquelle l'agent de simulation a affecté une valeur de l'agent de simulation à l'agent d'environnement.
+\item Envoi d'un message INFORM de l'agent de simulation à l'agent d'environnement, contenant le statut de résolution de la matrice à la fin du traitement par l'agent de simulation.
+\end{itemize}
+
+\section{Conclusion}
+Afin de pouvoir effectuer le traitement de plusieurs matrices simultanément, il faudrait utiliser des identifiants de conversations dans les messages. 
+
+%Il est actuellement possible de gérer des agents d'analyse qui se situent sur différentes stations 
+
+% - traitement de plusieurs matrices --> ajout de conversation id
+% - agents d'analyse sur différentes stations --> déjà fait
+% - non prise en compte de la mort eventulle des agents d'analyse --> a chaque itération on fait une requete au DF pour récupérer 27 agents d'analyse 
 \end{document}
