@@ -10,7 +10,7 @@ import java.util.*;
  * Created by Mar on 21/03/2016.
  */
 public class SudokuSubSet {
-    public SudokuCell[] subSet = new SudokuCell[9];
+    public SudokuCell[] subSet = new SudokuCell[9];//a subset of the global matrix. It can be either a line, a row or a square
 
     public SudokuSubSet() {} // dummy constructor
 
@@ -18,6 +18,11 @@ public class SudokuSubSet {
         this.subSet = subSet;
     }
 
+    /**
+     * Method to determine all the values possible of the SubSet.
+     * It goes through each Cell and if there is already a value associated to it, it removes it from the possible values
+     * @return Set of possible Integer for the SubSet
+     */
     public Set<Integer> availableInt(){
         Set<Integer> list = new HashSet<>(Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9));
         for (SudokuCell i : subSet){
@@ -28,6 +33,7 @@ public class SudokuSubSet {
         return list;
     }
 
+
     public void displayPossibleSubSet(){
         for (SudokuCell i : subSet){
             System.out.print(i.possibleValues()+" ");
@@ -35,6 +41,11 @@ public class SudokuSubSet {
         System.out.println();
     }
 
+
+    /**
+     * Method to serialize the SubSet of Cell into JSON format
+     * @return JSON String
+     */
     public String serializeJSON () {
         ObjectMapper mapper = new ObjectMapper();
         String jsonString = null;
@@ -47,6 +58,11 @@ public class SudokuSubSet {
         return jsonString;
     }
 
+    /**
+     * Method to get a Subset of cell from JSON String
+     * @param serialized JSON String
+     * @return SudokuSubSet
+     */
     public static SudokuSubSet deserializeJSON (String serialized) {
         ObjectMapper mapper = new ObjectMapper();
         SudokuSubSet sudoku = null;

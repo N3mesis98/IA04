@@ -20,6 +20,10 @@ public class SudokuMatrix {
 
     public SudokuCell[][] sudoku = new SudokuCell[9][9];
 
+    /**
+     * Method to import the matrix from a file.
+     * @param path Path of the file that contains the matrix
+     */
     public void importFromFile(String path){
         try {
             List<String> readSudoku = Files.readAllLines(FileSystems.getDefault().getPath(path));
@@ -36,10 +40,20 @@ public class SudokuMatrix {
         }
     }
 
+    /**
+     * Method to get SubSet of the matrix corresponding to a line.
+     * @param nbLine index ot the line (from 0 to 8)
+     * @return line
+     */
     public SudokuSubSet getLine(int nbLine){
         return new SudokuSubSet(this.sudoku[nbLine]);
     }
 
+    /**
+     * Method to get SubSet of the matrix corresponding to a row.
+     * @param nbRow index ot the row (from 0 to 8)
+     * @return row
+     */
     public SudokuSubSet getRow(int nbRow){
         SudokuCell[] row = new SudokuCell[9];
         for(int i=0;i<9 ;i++){
@@ -48,6 +62,11 @@ public class SudokuMatrix {
         return new SudokuSubSet(row);
     }
 
+    /**
+     * Method to get SubSet of the matrix corresponding to a square.
+     * @param nbSquare index ot the square (from 0 to 8)
+     * @return square
+     */
     public SudokuSubSet getSquare(int nbSquare){
         SudokuCell[] square = new SudokuCell[9];
         int firstLine = (nbSquare/3)*3;
@@ -62,6 +81,10 @@ public class SudokuMatrix {
         return new SudokuSubSet(square);
     }
 
+    /**
+     * Method to determine for the first time the possible values of each Cell.
+     * It depends on the possible values of the line, rox and square for each Cell.
+     */
     public void initialisePossibilities() {
         for (int i=0; i<9; i++) {
             for (int j=0; j<9; j++) {
@@ -117,6 +140,10 @@ public class SudokuMatrix {
         return sudoku;
     }
 
+    /**
+     * Method to determine if the matrix is incomplete, complete or impossible
+     * @return String corresponding to the status of the matrix : incomplete, complete or impossible
+     */
     public String isComplete() {
         for (int i=0; i<sudoku.length; i++) {
             for (SudokuCell cell : sudoku[i]) {

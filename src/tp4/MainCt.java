@@ -18,9 +18,11 @@ public class MainCt {
             mainProfile = new ProfileImpl(MAIN_CONF);
             AgentContainer mainContainer = rt.createMainContainer(mainProfile);
 
+            //Creation of the Environment Agent
             AgentController agentCc = mainContainer.createNewAgent("EnvAgt", "tp4.envAgt.EnvAgt", null);
             agentCc.start();
-            
+
+            //Creation of the Simulation Agent
             agentCc = mainContainer.createNewAgent("SimuAgt", "tp4.simuAgt.SimuAgt", null);
             agentCc.start();
         }
