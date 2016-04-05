@@ -23,6 +23,7 @@ public class ReceiveBhv extends CyclicBehaviour{
 
     @Override
     public void action() {
+		//wait for a message of type REQUEST or CANCEL
         MessageTemplate mt = MessageTemplate.or(MessageTemplate.MatchPerformative(ACLMessage.REQUEST),MessageTemplate.MatchPerformative(ACLMessage.CANCEL));
         ACLMessage message = parentAgt.receive(mt);
         if (message != null) {

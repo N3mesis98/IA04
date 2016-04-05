@@ -21,11 +21,12 @@ public class ReceiveBhv extends Behaviour {
 
     @Override
     public void action() {
+		//wait for a message INFORM, that contains a JSON message
         MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
         ACLMessage message = parentAgt.receive(mt);
         if (message != null) {
             Map<String, String> map = JSON.deserializeStringMap(message.getContent());
-            if (map.containsKey("data")) {
+            if (map.containsKey("data")) {//if there is the key data in it then this message is aimed to update the matrix
                 SudokuCell cell = SudokuCell.deserializeJSON(map.get("data"));
                 if (parentAgt.sudoku.sudoku[cell.line][cell.row].value != cell.value) {
                     parentAgt.sudoku.sudoku[cell.line][cell.row] = cell;
@@ -33,7 +34,7 @@ public class ReceiveBhv extends Behaviour {
                 }
             }
 
-            if (map.containsKey("end")) {
+            if (map.containsKey("end")) {//if there is the key end in it then this message is aimed to display the sudoku and display a message to know if it was solved or not
                 if (map.get("end").equals("complete")) {
                     System.out.println("\nSudoku solved\n");
                 }
@@ -41,7 +42,7 @@ public class ReceiveBhv extends Behaviour {
                     System.out.println("\nCould not solve sudoku\n");
                 }
                 parentAgt.sudoku.display();
-                isDone = true;
+                isDone = true;//in this case the behaviour is stopped because the simulation ended
             }
         }
         else{
