@@ -14,7 +14,7 @@ public class AnalyseAgt extends Agent {
     public AID simuAID = null;
 
     protected void setup() {
-        Services.registerService(this, "Operations","AnalyseSudoku");
+        Services.registerService(this, "Sudoku","AnalyseSudoku");
         addBehaviour(new ReceiveBhv(this));
     }
 }

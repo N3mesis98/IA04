@@ -21,6 +21,10 @@ public class TickerBhv extends TickerBehaviour {
         this.parentAgt=parentAgt;
     }
 
+    /**
+     * Method that is performed after a period.
+     * It stops the SimuBhv and see if it is necessary to continue the simulation or not
+     */
     @Override
     protected void onTick() {
         System.out.println("tick");
@@ -29,12 +33,12 @@ public class TickerBhv extends TickerBehaviour {
             simuBhv.stop();
         }
 
-        if (parentAgt.sudoku.isComplete().equals("incomplete") && modified) {
+        if (parentAgt.sudoku.isComplete().equals("incomplete") && modified) {//if the sudoku is incomplete and was modified then start another iteration of the simulation
             modified = false;
             simuBhv = new SimuBhv(this.parentAgt, this);
             parentAgt.addBehaviour(simuBhv);
         }
-        else {
+        else {//if the simulation finished then send the INFORM response to the EnvAgt, with the status of the sudoku matrix (incomplete, complete or impossible)
             ACLMessage message = new ACLMessage(ACLMessage.INFORM);
             message.addReceiver(parentAgt.envAID);
             Map<String, String> map = new HashMap<>();

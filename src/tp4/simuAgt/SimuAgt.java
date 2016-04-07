@@ -13,7 +13,7 @@ public class SimuAgt extends Agent {
     public SudokuMatrix sudoku = null;
     
     protected void setup() {
-        Services.registerService(this, "Operations", "SimulationSudoku");
+        Services.registerService(this, "Sudoku", "SimulationSudoku");
         addBehaviour(new InitBhv(this));
     }
 }

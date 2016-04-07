@@ -33,7 +33,7 @@ public class InitBhv extends Behaviour {
 		//then the sudoku matrix is serialized in JSON, that is added into a map ("data" as a key), then the map is serialized in JSON.
 		//Finally the JSON is sent to the first Simulation Agent available, in a REQUEST message
         if (parentAgt.simuAgt == null) {
-            AID[] serviceList = Services.getAgentsByService(parentAgt, "Operations", "SimulationSudoku");
+            AID[] serviceList = Services.getAgentsByService(parentAgt, "Sudoku", "SimulationSudoku");
             if (serviceList.length > 0) {
                 parentAgt.simuAgt = serviceList[0];
                 

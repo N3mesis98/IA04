@@ -26,7 +26,7 @@ public class AnalyseBhv extends Behaviour {
     }
 
     @Override
-    public void action() {
+    public void action() {//each time the behaviour is called it analyses one cell compared to others
         if (currentElement<9) {
             SudokuCell cell = subset.subSet[currentElement];
             
@@ -90,6 +90,10 @@ public class AnalyseBhv extends Behaviour {
         return isDone;
     }
 
+    /**
+     * Method to send to the SimuAgt an update about a Cell of the matrix
+     * @param cell SudokuCell that was updated
+     */
     private void sendCellUpdate(SudokuCell cell) {
         ACLMessage message = new ACLMessage(ACLMessage.INFORM);
         message.addReceiver(parentAgt.simuAID);

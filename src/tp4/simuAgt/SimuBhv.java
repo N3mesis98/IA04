@@ -26,8 +26,9 @@ public class SimuBhv extends Behaviour{
 
     @Override
     public void action() {
+        //for the first time need to send the subset of the matrix (line, row and square)to the different AnalyseAgt
         if (!started) {
-            for (int i=0; i<9; i++) {
+            for (int i=0; i<9; i++) {//line
                 ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
                 message.addReceiver(parentAgt.analyseAgtList[i]);
                 Map<String, String> map = new HashMap<>();
@@ -36,7 +37,7 @@ public class SimuBhv extends Behaviour{
                 parentAgt.send(message);
             }
 
-            for (int i=0; i<9; i++) {
+            for (int i=0; i<9; i++) {//row
                 ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
                 message.addReceiver(parentAgt.analyseAgtList[i+9]);
                 Map<String, String> map = new HashMap<>();
@@ -45,7 +46,7 @@ public class SimuBhv extends Behaviour{
                 parentAgt.send(message);
             }
 
-            for (int i=0; i<9; i++) {
+            for (int i=0; i<9; i++) {//square
                 ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
                 message.addReceiver(parentAgt.analyseAgtList[i+18]);
                 Map<String, String> map = new HashMap<>();
@@ -57,21 +58,23 @@ public class SimuBhv extends Behaviour{
             started = true;
         }
 
+        //each time a response INFORM is received , if it contains a SudokuCell update the sudoku matrix is updated and an INFORM is sent to the EnvAgt
         MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
         ACLMessage message = parentAgt.receive(mt);
         if (message != null) {
             Map<String, String> map = JSON.deserializeStringMap(message.getContent());
             if (map.containsKey("data")) {
                 SudokuCell cell = SudokuCell.deserializeJSON(map.get("data"));
-                // hairy voodoo
+                // if the value changed then update the value
                 if (cell.value>=1 && cell.value<=9) {
                     parentAgt.sudoku.sudoku[cell.line][cell.row].value = cell.value;
                 }
+                //update the list od possible for the Cell (intersection)
                 parentAgt.sudoku.sudoku[cell.line][cell.row].possibilities.retainAll(cell.possibilities);
 
 
                 tickerBhv.modified = true;
-
+                //the message is sent to the EnvAgt only if the value of the Cell is updated (not the list of possibilities)
                 if (cell.value>=1 && cell.value<=9) {
                     ACLMessage messageToEnv = new ACLMessage(ACLMessage.INFORM);
                     messageToEnv.addReceiver(parentAgt.envAID);
@@ -90,6 +93,10 @@ public class SimuBhv extends Behaviour{
         return isDone;
     }
 
+    /**
+     * Method to stop the simulation's iteration
+     * Send a CANCEL to every AnalyseAgt that is performing an operation
+     */
     public void stop(){
         ACLMessage message = new ACLMessage(ACLMessage.CANCEL);
         for (AID i : parentAgt.analyseAgtList) {

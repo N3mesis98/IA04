@@ -27,13 +27,13 @@ public class ReceiveBhv extends CyclicBehaviour{
         MessageTemplate mt = MessageTemplate.or(MessageTemplate.MatchPerformative(ACLMessage.REQUEST),MessageTemplate.MatchPerformative(ACLMessage.CANCEL));
         ACLMessage message = parentAgt.receive(mt);
         if (message != null) {
-            if(message.getPerformative()==ACLMessage.REQUEST){
+            if(message.getPerformative()==ACLMessage.REQUEST){//for a REQUEST performative an AnalyseBhv is created to work on this request
                 parentAgt.simuAID = message.getSender();
                 Map<String, String> map = JSON.deserializeStringMap(message.getContent());
                 analyseBhv = new AnalyseBhv(parentAgt, SudokuSubSet.deserializeJSON(map.get("data")));
                 parentAgt.addBehaviour(analyseBhv);
             }
-            else if (analyseBhv != null) {
+            else if (analyseBhv != null) {//if it is a CANCEL the current AnalyseBhv running is finished
                 parentAgt.removeBehaviour(analyseBhv);
             }
         }
