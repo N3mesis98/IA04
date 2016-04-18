@@ -1,0 +1,34 @@
+@prefix dc:      <http://purl.org/dc/elements/1.1/> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix wot:     <http://xmlns.com/wot/0.1/> .
+@prefix foaf:    <http://xmlns.com/foaf/0.1/> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix vs:      <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix td5:     <http://www.owl-ontologies.com/td5#> .
+
+td5:jean rdf:type foaf:Person ;
+     foaf:firstName "Jean" ;
+     foaf:topic_interest td5:adrien ;
+     foaf:knows td5:adrien .
+
+td5:adrien rdf:type foaf:Person ;
+     foaf:firstName "Adrien" ;
+     foaf:topic_interest td5:adrien ;
+     foaf:knows td5:marouane .
+
+td5:charles rdf:type foaf:Person ;
+     foaf:firstName "Charles" ;
+    foaf:topic_interest td5:adrien ;
+    foaf:knows td5:florian .
+
+td5:florian rdf:type foaf:Person ;
+     foaf:firstName "Florian" ;
+     foaf:topic_interest td5:adrien ;
+     foaf:knows td5:marouane .
+
+td5:marouane rdf:type foaf:Person ;
+     foaf:firstName "Marouane" ;
+    foaf:topic_interest td5:adrien ;
+    foaf:knows td5:charles ;
+        foaf:knows td5:adrien .
