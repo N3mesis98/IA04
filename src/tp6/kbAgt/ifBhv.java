@@ -23,16 +23,23 @@ public class ifBhv extends Behaviour {
         MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
         ACLMessage message = this.parentAgt.receive(mt);
         if (message != null) {
-            runSelectQuery(message.getContent());
+            ACLMessage reply = message.createReply();
+            reply.setContent(runSelectQuery(message.getContent()));
+            reply.setPerformative(ACLMessage.INFORM);
+            parentAgt.send(reply);
+
         }
+        else
+            block();
     }
 
-    public void runSelectQuery(String queryString) {
+    public String runSelectQuery(String queryString) {
         Query query = QueryFactory.create(parentAgt.prefix+" "+queryString);
         QueryExecution queryExecution = QueryExecutionFactory.create(query, parentAgt.model);
         ResultSet r = queryExecution.execSelect();
-        ResultSetFormatter.out(r);
+        String resultQuery = ResultSetFormatter.asText(r);
         queryExecution.close();
+        return  resultQuery;
     }
 
 

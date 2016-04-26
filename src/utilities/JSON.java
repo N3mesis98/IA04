@@ -38,30 +38,4 @@ public class JSON {
         }
         return map;
     }
-
-
-
-    public static String serializeStringArrayMap(Map<String, ArrayList<String> > map) {
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonString = null;
-
-        try {
-            jsonString = mapper.writeValueAsString(map);
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return jsonString;
-    }
-
-    public static Map<String, ArrayList<String> > deserializeStringArrayMap (String serialized) {
-        ObjectMapper mapper = new ObjectMapper();
-        Map<String, ArrayList<String> > map = null;
-
-        try {
-            map = mapper.readValue(serialized, new TypeReference<Map<String, String>>(){});
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return map;
-    }
 }
