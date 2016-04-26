@@ -1,0 +1,90 @@
+\documentclass[a4paper,11pt]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage[francais]{babel}
+
+% title info
+\newcommand{\ititle}{IA04 - TP6} % title
+\newcommand{\isubtitle}{RDF et Requêtes SPARQL}
+\newcommand{\iauthor}{Marouane Hammi\\Adrien Jacquet} % author
+\newcommand{\idate}{\today} % date
+
+\input{src/config}
+\input{src/source_code}
+
+\begin{document}
+\input{src/titlepage}
+
+\newpage
+\section{Requêtes sur une ontologie}
+\begin{enumerate}
+\item Pour rechercher l'ensemble des concepts définis dans une ontologie, on utilise la requête SPARQL suivante :
+\begin{lstlisting}[language=SPARQL]
+SELECT DISTINCT ?c WHERE {?c rdf:type rdfs:Class}
+\end{lstlisting}
+~\\\vspace*{-.5cm}
+\item La recherche des propriétés d'une ontologie suit globalement le même schéma, sauf que l'on cherche non pas les éléments de type \lstinline$rdfs:Class$, mais les éléments de type \lstinline$rdf:Property$.
+\begin{lstlisting}[language=SPARQL]
+SELECT DISTINCT ?p WHERE {?p rdf:type rdf:Property}
+\end{lstlisting}
+~\\\vspace*{-.5cm}
+\item Pour récupérer la liste des concepts étant le domaine d'au moins deux relations, on commence par sélectionner, comme précédemment, la liste des concepts de l'ontologie.
+On vérifie ensuite pour chaque concept si il participe à au moins deux triplets respectant le motif \lstinline$?x rdfs:domain ?concept$ différents.
+\begin{lstlisting}[language=SPARQL]
+SELECT DISTINCT ?c WHERE {
+	?c rdf:type rdfs:Class .
+	?x rdfs:domain ?c .
+	?y rdfs:domain ?c .
+	FILTER (?x != ?y)
+}
+\end{lstlisting}
+\end{enumerate}
+
+\section{Système multi-agent}
+\subsection{Requêtes sur la base de connaissance}
+\begin{enumerate}
+	\item Pour récupérer la liste des individus connus par une personne désignée par son nom, il faut procéder en deux étapes.
+	On commence par retrouver l'identifiant RDF de l'entité ayant une propriété \lstinline$foaf:firstName$ valant \lstinline!$name!, c'est à dire le nom passé en paramètre pour la requête.
+	On retrouve ensuite la liste des personnes connus en sélectionnant la liste des triplets dont le prédicat est \lstinline$foaf:knows$ et le sujet l'identifiant récupéré précédemment.
+	\begin{lstlisting}[language=SPARQL]
+SELECT DISTINCT ?p WHERE {
+	?s foaf:firstName "$name" .
+	?s foaf:knows ?p .
+}
+	\end{lstlisting}
+	~\\\vspace*{-.5cm}
+	\item Pour rechercher les personnes ayant un intérêt pour un même pays qu'un individu dont le nom est spécifié en paramètre, on doit commencer, comme précédemment par récupérer l'identifiant RDF de cet individu.
+	On récupère ensuite les objets des triplets de la forme \lstinline$?s foaf:topic_interest ?c$ où \lstinline$?s$ est la personne retrouvée précédemment et \lstinline$?c$ une entité de type \lstinline$lgdo:Country$, c'est à dire étant impliqué dans un triplet \lstinline$?c a lgdo:Country$.
+	Enfin, on sélectionne les triplets respectant encore une fois la forme \lstinline$?p foaf:topic_interest ?c$, mais où \lstinline$?p$ est différent de l'identifiant de la personne dont le nom a été passé en paramètre.
+		\begin{lstlisting}[language=SPARQL]
+SELECT DISTINCT ?p WHERE {
+	?s foaf:firstName "$name" .
+	?s foaf:topic_interest ?c .
+  ?c a lgdo:Country .
+  ?p foaf:topic_interest ?c .
+  FILTER(?p != ?s)
+}
+	\end{lstlisting}
+\end{enumerate}
+
+\section{Requêtes vers un site distant}
+\subsection{Composition}
+Pour récupérer la liste des capitales des pays qui intéressent une personne, il faudrait effectuer deux types différents de requête.
+La première, sur la base de connaissance locale, pour récupérer la liste de ces pays :
+\begin{lstlisting}[language=SPARQL]
+SELECT DISTINCT ?c WHERE {
+	?s foaf:firstName "$name" .
+	?s foaf:topic_interest ?c .
+  ?c a lgdo:Country .
+}
+\end{lstlisting}
+
+La seconde, exécutée une fois par pays précédemment sélectionné, pour récupérer la capitale associée :
+\begin{lstlisting}[language=SPARQL]
+SELECT ?city FROM <http://linkedgeodata.org> WHERE { 
+  "$country" gdo:capital_city ?city .
+} 
+\end{lstlisting}
+
+\end{document}

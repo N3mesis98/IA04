@@ -10,7 +10,8 @@
 @prefix lgdo:    <http://linkedgeodata.org/ontology/> .
 @prefix geo:     <http://linkedgeodata.org/triplify/>
 
-geo:node1363947712 a lgdo:Country .
+geo:node1363947712 a lgdo:Country . # France
+geo:node424313734 a lgdo:Country . # Brésil
 
 td5:jean rdf:type foaf:Person ;
     foaf:firstName "Jean" ;

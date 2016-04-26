@@ -1,0 +1,40 @@
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{lastpage}
+\usepackage[top=2.75cm, bottom=3cm, left=2cm, right=2cm]{geometry}
+\usepackage[colorlinks=true, urlcolor=blue, linkcolor=black, citecolor=black]{hyperref}
+\usepackage{calc}
+\usepackage{amsmath} % equation align
+\usepackage{amsfonts}
+\usepackage{amssymb}
+% \usepackage{mathastext} % use \text{} when needed instead
+\usepackage{fancyhdr}
+\usepackage[format=hang, width=.8\textwidth, labelfont=sc]{caption}
+\usepackage[format=hang, width=.8\textwidth, labelfont=normalfont]{subcaption}
+% \usepackage[labelformat=empty]{caption} % no label before caption
+\usepackage{verbatim}
+\usepackage{framed}
+
+% paragraph and subparagraph as level 4 and 5 sections
+\usepackage{titlesec}
+\usepackage{titletoc}
+\setcounter{secnumdepth}{5}
+\setcounter{tocdepth}{5}
+\titleformat{\paragraph} [hang] {\normalfont\normalsize\bfseries} {\theparagraph} {1em} {}
+\titleformat{\subparagraph} [hang] {\normalfont\normalsize\bfseries} {\thesubparagraph} {1em} {}
+
+% lists config
+\usepackage{enumitem}
+\setlist[itemize]{label=-}
+
+% replace no-break space
+\DeclareUnicodeCharacter{00A0}{ }
+
+% header & footer
+\pagestyle{fancy}
+\fancyhf{}
+\setlength{\headheight}{14pt}
+\lhead{{\small \ititle}}
+\rhead{{\small \isubtitle}}
+\lfoot{\vspace{.11cm}{\small \iauthor}}
+\rfoot{\hrule\vspace{.1cm}\thepage /\pageref*{LastPage}}
