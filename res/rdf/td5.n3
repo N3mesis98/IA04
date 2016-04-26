@@ -7,35 +7,37 @@
 @prefix vs:      <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
 @prefix td5:     <http://www.owl-ontologies.com/td5#> .
 @prefix lgd:     <http://linkedgeodata.org/> .
-@prefix lgdo:     <http://linkedgeodata.org/ontology/> .
+@prefix lgdo:    <http://linkedgeodata.org/ontology/> .
 @prefix geo:     <http://linkedgeodata.org/triplify/>
 
 geo:node1363947712 a lgdo:Country .
 
 td5:jean rdf:type foaf:Person ;
-     foaf:firstName "Jean" ;
-     foaf:topic_interest td5:adrien ;
-     foaf:topic_interest geo:node1363947712 ;
-     foaf:knows td5:adrien .
+    foaf:firstName "Jean" ;
+    foaf:topic_interest geo:node1363947712 ; # France
+    foaf:topic_interest geo:node424313734 ; # Brésil
+    foaf:knows td5:florian ;
+    foaf:knows td5:adrien .
 
 td5:adrien rdf:type foaf:Person ;
-     foaf:firstName "Adrien" ;
-     foaf:topic_interest td5:adrien ;
-     foaf:knows td5:marouane .
+    foaf:firstName "Adrien" ;
+    foaf:topic_interest geo:node1363947712 ; # France
+    foaf:topic_interest geo:node424313734 ; # Brésil
+    foaf:knows td5:marouane .
 
 td5:charles rdf:type foaf:Person ;
-     foaf:firstName "Charles" ;
-    foaf:topic_interest td5:adrien ;
+    foaf:firstName "Charles" ;
+    foaf:topic_interest geo:node424313734 ; # Brésil
     foaf:knows td5:florian .
 
 td5:florian rdf:type foaf:Person ;
-     foaf:firstName "Florian" ;
-     foaf:topic_interest geo:node1363947712 ;
-     foaf:topic_interest td5:adrien ;
-     foaf:knows td5:marouane .
+    foaf:firstName "Florian" ;
+    foaf:topic_interest geo:node1363947712 ; # France
+    foaf:topic_interest td5:adrien ;
+    foaf:knows td5:marouane .
 
 td5:marouane rdf:type foaf:Person ;
     foaf:firstName "Marouane" ;
-    foaf:topic_interest geo:node1363947712 ;
+    foaf:topic_interest geo:node1363947712 ; # France
     foaf:knows td5:charles ;
-        foaf:knows td5:adrien .
+    foaf:knows td5:adrien .
