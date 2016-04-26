@@ -5,7 +5,7 @@
 # functions
 #------------------------------
 function launch () {
-    java -cp lib/*:bin/: $@
+    java -cp lib/*:lib/libjena/*:bin/: $@
 }
 
 
@@ -34,6 +34,9 @@ if [ "$?" -eq 0 ]; then
             launch "tp4.MainCt" &
             read -r
             launch "tp4.analyseCt.AnalyseCt" 27
+            ;;
+        "tp6")
+            launch "tp6.MainCt"
             ;;
         *)
             echo "Error: Unknown target"
