@@ -23,6 +23,9 @@ public class MainCt {
 
             AgentController kbAgentCc = mainContainer.createNewAgent("KBAgt", "tp6.kbAgt.KBAgt", null);
             kbAgentCc.start();
+
+            AgentController geKBbAgentCc = mainContainer.createNewAgent("GeoAgt", "tp6.geoAgt.GeoAgt", null);
+            geKBbAgentCc.start();
         }
         catch(Exception ex){
             ex.printStackTrace();

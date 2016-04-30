@@ -23,21 +23,22 @@ public class ifBhv extends Behaviour{
 
     //TODO message to send in Jade interface copy/paste: {"typeQuery" : "1" , "name" : "Jean" }
 
-
-
     @Override
     public void action() {
         MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
         ACLMessage message = this.parentAgt.receive(mt);
         if (message != null) {
             Map<String,String> map = JSON.deserializeStringMap(message.getContent());
+            String specificService = "";
             String query ="";
             switch(map.get("typeQuery")){
                 case "1" :
+                    specificService = "KB";
                     query = "SELECT DISTINCT ?p WHERE {?s foaf:firstName \""+ map.get("name")+"\" . ?s foaf:knows ?p .}";
                     break;
 
                 case "2" :
+                    specificService = "KB";
                     query = "SELECT DISTINCT ?p WHERE {" +
                             "?s foaf:firstName \""+map.get("name") +"\" ." +
                             "?s foaf:topic_interest ?c ." +
@@ -46,11 +47,16 @@ public class ifBhv extends Behaviour{
                             "FILTER(?p != ?s)" +
                             "}";
                     break;
+
+                case "3" :
+                    specificService = "Geo";
+                    query = "SELECT * WHERE {?c a lgdo:Country ; lgdo:capital_city ?city; lgdo:wikipedia ?name .} ORDER BY ?city";
+                    break;
+
                 default :
                     break;
             }
-
-            sendMsg(query);
+            sendMsg(query,specificService);
         }
         else
             block();
@@ -58,11 +64,11 @@ public class ifBhv extends Behaviour{
     }
 
 
-    public void sendMsg(String query){
+    public void sendMsg(String query, String specificService){
         String conversationID = UUID.randomUUID().toString();
         ACLMessage message = new ACLMessage(ACLMessage.REQUEST);
         message.setConversationId(conversationID);
-        message.addReceiver(Services.getAgentsByService(parentAgt,"KB","KB")[0]);
+        message.addReceiver(Services.getAgentsByService(parentAgt,"KB",specificService)[0]);
         message.setContent(query);
         parentAgt.send(message);
         parentAgt.addBehaviour(new ReceiveBhv(parentAgt,query,conversationID));
