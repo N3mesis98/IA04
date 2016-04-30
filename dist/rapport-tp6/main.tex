@@ -30,7 +30,7 @@ SELECT DISTINCT ?p WHERE {?p rdf:type rdf:Property}
 \end{lstlisting}
 ~\\\vspace*{-.5cm}
 \item Pour récupérer la liste des concepts étant le domaine d'au moins deux relations, on commence par sélectionner, comme précédemment, la liste des concepts de l'ontologie.
-On vérifie ensuite pour chaque concept si il participe à au moins deux triplets respectant le motif \lstinline$?x rdfs:domain ?concept$ différents.
+On ne conserve ensuite que les concepts qui participent à au moins deux triplets respectant le motif \lstinline$?x rdfs:domain ?concept$ différents.
 \begin{lstlisting}[language=SPARQL]
 SELECT DISTINCT ?c WHERE {
 	?c rdf:type rdfs:Class .
@@ -41,6 +41,7 @@ SELECT DISTINCT ?c WHERE {
 \end{lstlisting}
 \end{enumerate}
 
+\newpage
 \section{Système multi-agent}
 \subsection{Requêtes sur la base de connaissance}
 \begin{enumerate}
@@ -67,17 +68,17 @@ SELECT DISTINCT ?p WHERE {
 }
 	\end{lstlisting}
 \end{enumerate}
-\subsection{Description Agents}
-Le système est composé de deux agents PropagateSparQLAgt et KBAgt.
+\subsection{Description des agents}
+Le système est composé de deux agents : PropagateSPARQLAgt et KBAgt.
 \begin{itemize}
-\item PropagateSparQLAgt est l'agent chargé de l'interface du système avec l'utilisateur. Il possède les Behaviours suivants :
+\item PropagateSPARQLAgt est l'agent chargé de l'interface du système avec l'utilisateur. Il possède les Behaviours suivants :
 	\begin{itemize}
-		\item InterfaceBhv : CyclicBehaviour qui attend un message REQUEST comportant le type de requête souhaitée et le nom (paramètre nécessaire pour certaines requêtes). Lorsqu'une requête est envoyée, un Behaviour est crée pour recevoir la réponse.
-		\item ReceiveBhv : Behaviour crée pour attendre la réponse d'une requête contenu dans un message INFORM et afficher la réponse à l'utilisateur. Un conversationID est utilisé pour garantir que la réponse lui est bien destinée.
+		\item InterfaceBhv : CyclicBehaviour qui attend un message REQUEST comportant le type de requête souhaitée et le nom (paramètre nécessaire pour certaines requêtes). Lorsqu'une requête est envoyée, un Behaviour est créé pour recevoir la réponse.
+		\item ReceiveBhv : Behaviour créé pour attendre la réponse d'une requête contenue dans un message INFORM et afficher la réponse dans la sortie standard. Un conversationID est utilisé pour garantir que la réponse lui est bien destiné.
 	\end{itemize}
 \item KBAgt est l'agent chargé d'effectuer les requêtes à la base de connaissance.
 	\begin{itemize}
-		\item ReceiveBhv : CyclicBehaviour qui attend un message REQUEST comportant la requête souhaitée. Il concatène la requête avec la liste des préfixes et effectue la requête sur la base de connaissance. Une fois la réponse obtenu, elle est renvoyée à l'expéditeur de la requête dans un message INFORM.
+		\item ReceiveBhv : CyclicBehaviour qui attend un message REQUEST comportant la requête souhaitée. Il concatène la requête avec la liste des préfixes et effectue la requête sur la base de connaissance. Une fois la réponse obtenue, elle est renvoyée à l'expéditeur de la requête dans un message INFORM.
 	\end{itemize}
 \end{itemize}
 
@@ -93,22 +94,22 @@ SELECT DISTINCT ?c WHERE {
 }
 \end{lstlisting}
 
-La seconde, exécutée une fois par pays précédemment sélectionné, pour récupérer la capitale associée :
+La seconde, exécutée une fois par pays précédemment sélectionné sur la base de connaissance distante, pour récupérer la capitale associée :
 \begin{lstlisting}[language=SPARQL]
-SELECT ?city FROM <http://linkedgeodata.org> WHERE { 
+SELECT ?city WHERE { 
   "$country" lgdo:capital_city ?city .
 } 
 \end{lstlisting}
-\subsection{Description Agents}
-Pour ce système nous utilisons le PropagateSparQLAgt précédent, qui va selon le type de la requête demandée par l'utilisateur, envoyé la requête à l'agent KBAgt ou à l'agent GeoAgt.
+\subsection{Description des agents}
+Pour ce système nous utilisons le PropagateSPARQLAgt précédent, qui va selon le type de requête demandé, envoyer la requête à l'agent KBAgt ou à l'agent GeoAgt.
 L'agent GeoAgt fonctionne de la même manière que KBAgt, excepté qu'il effectue la requête sur la base de connaissance distante.
 
 Pour effectuer la requête composée, il faudrait que :
 \begin{enumerate}
-\item PropagateSparQLAgt reçoive le type de la requête venant de l'utilisateur, dans son InterfaceBhv.
-\item InterfaceBhv envoie la première requête à KBAgt et crée le ReceiveBhv en précisant qu'il s'agit d'une requête composée. 
+\item PropagateSPARQLAgt reçoive le type de la requête venant de l'utilisateur, dans son InterfaceBhv.
+\item InterfaceBhv envoie la première requête à KBAgt et créé le ReceiveBhv en précisant qu'il s'agit d'une requête composée. 
 \item Lorsque ReceiveBhv reçoit la réponse de KBAgt usuelle, il crée un ComposeBhv.
-\item Le ComposeBhv envoie la requête à GeoAgt de la même manière que InterfaceBhv et crée des ReceiveBhv qui afficheront le résultat.
+\item Le ComposeBhv envoie les requêtes au GeoAgt de la même manière que InterfaceBhv et crée des ReceiveBhv qui afficheront les différents résultats obtenus.
 \end{enumerate}
  
 
