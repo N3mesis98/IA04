@@ -5,8 +5,8 @@ package tp7;
  */
 public class Constants {
     public static int GRID_SIZE = 30 ;// largeur de la grille
-    public static int NUM_INSECT = 3 ;// nombre initial d'insectes
-    public static int NUM_FOOD_CELL = 15 ;// nombre de cellules avec nourriture
+    public static int NUM_INSECT = 0 ;// nombre initial d'insectes
+    public static int NUM_FOOD_CELL = 5 ;// nombre de cellules avec nourriture
     public static int MAX_ENERGY = 15 ;// maximum d'énergie d'un insecte
     public static int MAX_LOAD = 5 ;// charge maximale d'un insecte
     public static int CAPACITY = 10 ;// points de capacité à répartir chez l'insecte entre déplacement, perception et charge

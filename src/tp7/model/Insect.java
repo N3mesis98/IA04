@@ -1,11 +1,14 @@
 package tp7.model;
 
 import java.lang.Math;
+import java.util.List;
+import java.util.ArrayList;
 
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.engine.Stoppable;
 import sim.util.Int2D;
+import sim.util.Bag;
 
 import tp7.Constants;
 
@@ -42,22 +45,29 @@ public class Insect implements Steppable {
     @Override
     public void step(SimState state) {
         Beings beings = (Beings) state;
-
-        // random mouvement value (!= 0)
-        int xx = beings.random.nextInt(mouvement)+1;
-        int yy = beings.random.nextInt(mouvement)+1;
         
-        // random sign change
-        if (beings.random.nextBoolean()) xx = -xx;
-        if (beings.random.nextBoolean()) yy = -yy;
-        
-        move(beings, xx, yy);
-        
-        /*for (int mvt=0; mvt<mouvement && currEnergy>0; mvt++) {
-            move(beings, beings.random.nextInt(3)-1, beings.random.nextInt(3)-1);
-        }*/
-        //move(beings, beings.random.nextInt(3)-1, beings.random.nextInt(3)-1);
-        //eat(null);
+        Food localFood = getFoodAtLocation(beings, x, y);
+        if (localFood != null) {
+            // there is food here
+            System.out.println(name+" : food here !");
+        }
+        else {
+            Int2D distantFoodLocation = perception(beings);
+            if (distantFoodLocation != null) {
+                moveInDirectionOf(beings, distantFoodLocation.x, distantFoodLocation.y);
+            }
+            else {
+                // random mouvement value (!= 0)
+                int xx = beings.random.nextInt(mouvement)+1;
+                int yy = beings.random.nextInt(mouvement)+1;
+                
+                // random sign change
+                if (beings.random.nextBoolean()) xx = -xx;
+                if (beings.random.nextBoolean()) yy = -yy;
+                
+                move(beings, xx, yy);
+            }
+        }
         
         if (currEnergy <= 0) {
             if (Constants.DEBUG) System.out.println(name+" : dies at ("+x+", "+y+")");
@@ -77,6 +87,29 @@ public class Insect implements Steppable {
 
         beings.yard.remove(this);
         beings.yard.setObjectLocation(this, x, y);
+    }
+    
+    // move at maximum speed in direction of the specified delta location
+    public void moveInDirectionOf(Beings beings, int xx, int yy) {
+        if (Math.abs(xx) > mouvement) {
+            if (xx > 0) {
+                xx = mouvement;
+            }
+            else {
+                xx = -mouvement;
+            }
+        }
+        
+        if (Math.abs(yy) > mouvement) {
+            if (yy > 0) {
+                yy = mouvement;
+            }
+            else {
+                yy = -mouvement;
+            }
+        }
+        
+        move(beings, xx, yy);
     }
 
     // modulus
@@ -123,6 +156,51 @@ public class Insect implements Steppable {
                 currEnergy = Math.min(currEnergy+lunch, Constants.MAX_ENERGY);
             }
         }
+    }
+    
+    // return delta location of closest food or null
+    public Int2D perception(Beings beings) {
+        for (int i=1; i<=perception; i++) {
+            for (int xx=-i; xx<=i; xx++) {
+                if (xx==i || xx==-i) {
+                    for (int yy=-i; yy<=i; yy++) {
+                        Food food = getFoodAtLocation(beings, x+xx, y+yy);
+                        if (food != null) {
+                            if (Constants.DEBUG) System.out.println(name+" : found food at ("+(x+xx)+", "+(y+yy)+") from ("+x+", "+y+")");
+                            return new Int2D(xx, yy);
+                        }
+                    }
+                }
+                else {
+                    Food food = getFoodAtLocation(beings, x+xx, y+i);
+                    if (food != null) {
+                        if (Constants.DEBUG) System.out.println(name+" : found food at ("+(x+xx)+", "+(y+i)+") from ("+x+", "+y+")");
+                        return new Int2D(xx, i);
+                    }
+                        
+                    food = getFoodAtLocation(beings, x+xx, y-i);
+                    if (food != null) {
+                        if (Constants.DEBUG) System.out.println(name+" : found food at ("+(x+xx)+", "+(y-i)+") from ("+x+", "+y+")");
+                        return new Int2D(xx, -i);
+                    }
+                }
+            }
+        }
+        return null; // nothing in range
+    }
+    
+    // return Food if there is one at the specified absolute location or null
+    public Food getFoodAtLocation(Beings beings, int xx, int yy) {
+        Bag agents = beings.yard.getObjectsAtLocation(xx, yy);
+        if (agents != null) {
+            for (int i=0; i<agents.size(); i++) {
+                Object agt = agents.get(i);
+                if (agt!=null && agt.getClass()==Food.class) {
+                    return (Food) agt;
+                }
+            }
+        }
+        return null; // no food in current position
     }
 
 

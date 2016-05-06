@@ -24,7 +24,8 @@ public class Beings extends SimState {
         addFood();
         
         // specific insects
-        addSpecificInsect(0, Constants.CAPACITY, 0, "Gonzalez");
+        addSpecificInsect(0, Constants.CAPACITY, 0, "gonzalez"); numInsects++;
+        addSpecificInsect(0, 0, Constants.CAPACITY, "perception"); numInsects++;
     }
     
     
@@ -38,7 +39,7 @@ public class Beings extends SimState {
     }
 
     private void addInsect() {
-        for(int  i  =  0;  i  <  numInsects;  i++) {
+        for(int  i  =  0;  i  <  Constants.NUM_INSECT;  i++) {
             int x = random.nextInt(yard.getWidth());
             int y = random.nextInt(yard.getHeight());
             int charge = 0;
