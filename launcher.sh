@@ -38,6 +38,9 @@ if [ "$?" -eq 0 ]; then
         "tp6")
             launch "tp6.MainCt"
             ;;
+        "tp7")
+            launch "tp7.main.BeingsMain"
+            ;;
         *)
             echo "Error: Unknown target"
             ;;
