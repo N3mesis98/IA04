@@ -1,5 +1,6 @@
 package tp7.model;
 
+import com.sun.xml.internal.bind.v2.runtime.reflect.opt.Const;
 import sim.engine.SimState;
 import sim.engine.Steppable;
 import sim.engine.Stoppable;
@@ -28,11 +29,12 @@ public class Insect implements Steppable {
 	public void step(SimState state) {
 		Beings beings = (Beings) state;
 
-		for (int mvt=0; mvt<mouvement && currEnergy>0; mvt++) {
+		/*for (int mvt=0; mvt<mouvement && currEnergy>0; mvt++) {
 			move(beings, beings.random.nextInt(3)-1, beings.random.nextInt(3)-1);
-		}
-
-
+		}*/
+		move(beings, beings.random.nextInt(3)-1, beings.random.nextInt(3)-1);
+		eat(null);
+		System.out.println("Energy : "+currEnergy+" Charge :"+currCharge);
 		/*int f = friendsNum(beings) ;
 		if (f * 3 < 8) {
 			if (!move2(beings))
@@ -50,17 +52,51 @@ public class Insect implements Steppable {
 
 		beings.yard.remove(this);
 
-		// prendre en compte la charge
+		// prendre en compte la charge, quand 0 même si on a de la charge on meurt, ça doit être gérer au niveau du comportement
 		if (currEnergy > 0) {
 			beings.yard.setObjectLocation(this, x, y);
 		}
 		else {
+			beings.setNumInsects(beings.getNumInsects()-1);//when insect dies decrement the number of insect important for the inspector
 			stop.stop();
 		}
 	}
 
 	public int mod(int a, int b){
 		return (((a % b) + b) % b);
+	}
+
+	/**
+	 * Method to charge food. The insect must be on the same case as the food
+	 * @param food food to take food for the charge
+     */
+	public void chargerFood(Food food){
+		if (currCharge < charge && food!=null){//maybe error because food never get null, need to test
+			currCharge += food.getFood(Constants.NB_UNIT_FOOD_PER_TURN);
+		}
+	}
+
+	/**
+	 * Method to eat to a case next to the insect or from its charge
+	 * @param food either a food or null, if null then try to eat from the charge
+     */
+	public void eat(Food food){
+		if(currEnergy < Constants.MAX_ENERGY){
+			int lunch = 0;
+			if(food!=null){
+				lunch = food.getFood(Constants.NB_UNIT_FOOD_PER_TURN);
+			}
+			if(lunch > 0){
+				lunch = (lunch * Constants.FOOD_ENERGY);
+
+			}else if ((currCharge - Constants.NB_UNIT_FOOD_PER_TURN) >= 0) {
+				currCharge -= Constants.NB_UNIT_FOOD_PER_TURN;
+				lunch = (Constants.NB_UNIT_FOOD_PER_TURN * Constants.FOOD_ENERGY);
+			}
+			if(lunch > 0)
+				for(int bite = 1 ; bite <= lunch && currEnergy < Constants.MAX_ENERGY; bite++)
+					currEnergy += bite;
+		}
 	}
 
 

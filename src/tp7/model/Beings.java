@@ -9,6 +9,7 @@ import tp7.Constants;
 
 public class Beings extends SimState {
 
+	public int numInsects = Constants.NUM_INSECT;
 	//public ObjectGrid2D yard = new ObjectGrid2D(Constants.GRID_SIZE,Constants.GRID_SIZE);
 	public SparseGrid2D yard = new SparseGrid2D(Constants.GRID_SIZE,Constants.GRID_SIZE);
 	public Beings(long seed) {
@@ -24,7 +25,7 @@ public class Beings extends SimState {
 	}
 
 	private void addInsect() {
-		for(int  i  =  0;  i  <  Constants.NUM_INSECT;  i++) {
+		for(int  i  =  0;  i  <  numInsects;  i++) {
 			int x = random.nextInt(yard.getWidth());
 			int y = random.nextInt(yard.getHeight());
 			int charge = 0;
@@ -33,7 +34,10 @@ public class Beings extends SimState {
 			for (int j = 0; j <Constants.CAPACITY; j++){
 				int r = random.nextInt(3);
 				if (r ==0){
-					charge++;
+					if(charge < Constants.MAX_LOAD)
+						charge++;
+					else
+						j--;
 				} else if (r==1){
 					mouvement++;
 				} else {
@@ -58,6 +62,13 @@ public class Beings extends SimState {
 		}
 	}
 
+	public int getNumInsects() {
+		return numInsects;
+	}
+
+	public void setNumInsects(int numInsects) {
+		this.numInsects = numInsects;
+	}
 /*	public boolean free(int x,int y) {
 		int xx = yard.stx(x);
 		int yy = yard.sty(y);

@@ -13,5 +13,6 @@ public class Constants {
     public static int MAX_FOOD = 5 ;// maximum de nourriture sur une cellule
     public static int FOOD_ENERGY = 3 ;// nombre de points d'énergie donnés par 1 point de nourriture
     public static int NB_DIRECTIONS = 8; //direction de mouvement
+    public static int NB_UNIT_FOOD_PER_TURN = 1; //nb d'unité de nourriture qu'il est possible de manger ou charger par un insecte à chaque tour
 
 }
