@@ -46,14 +46,29 @@ public class Insect implements Steppable {
     public void step(SimState state) {
         Beings beings = (Beings) state;
         
+        if (Constants.DEBUG) System.out.println(name+" : "+currEnergy+" energy, "+currCharge+" charge");
+        
         Food localFood = getFoodAtLocation(beings, x, y);
         if (localFood != null) {
             // there is food here
-            System.out.println(name+" : food here !");
+            int deltaEat = Math.min(Constants.FOOD_ENERGY*Constants.NB_UNIT_FOOD_PER_TURN, Constants.MAX_ENERGY-currEnergy);
+            int deltaCharge = Math.min(Constants.NB_UNIT_FOOD_PER_TURN, charge-currCharge) * Constants.FOOD_ENERGY;
+            
+            if (deltaEat >= deltaCharge) {
+                eat(localFood);
+            }
+            else {
+                chargerFood(localFood);
+            }
+        }
+        else if (currEnergy <= 1) {
+            // need to eat NOW !
+            eat(null);
         }
         else {
             Int2D distantFoodLocation = perception(beings);
             if (distantFoodLocation != null) {
+                // move in direction of the closest food
                 moveInDirectionOf(beings, distantFoodLocation.x, distantFoodLocation.y);
             }
             else {
@@ -69,6 +84,10 @@ public class Insect implements Steppable {
             }
         }
         
+        // consume energy at each step instead of at each move
+        // else, easy optimal solution --> no one moves
+        currEnergy--;
+        
         if (currEnergy <= 0) {
             if (Constants.DEBUG) System.out.println(name+" : dies at ("+x+", "+y+")");
             
@@ -83,7 +102,7 @@ public class Insect implements Steppable {
         
         x = mod((x+xx),beings.yard.getWidth());
         y = mod((y+yy),beings.yard.getHeight());
-        currEnergy--;
+        //currEnergy--;
 
         beings.yard.remove(this);
         beings.yard.setObjectLocation(this, x, y);
@@ -122,11 +141,10 @@ public class Insect implements Steppable {
      * @param food food to take food for the charge
      */
     public void chargerFood(Food food){
-        if (Constants.DEBUG) System.out.println(name+" : charge at ("+x+", "+y+")");
+        int n = food.getFood(Math.min(charge-currCharge, Constants.NB_UNIT_FOOD_PER_TURN));
         
-        if (currCharge < charge && food!=null){//maybe error because food never get null, need to test
-            currCharge += food.getFood(Constants.NB_UNIT_FOOD_PER_TURN);
-        }
+        currCharge+=n;
+        if (Constants.DEBUG) System.out.println(name+" : charge "+n+" at ("+x+", "+y+")");
     }
 
     /**
@@ -136,16 +154,14 @@ public class Insect implements Steppable {
     public void eat(Food food){
         if(currEnergy < Constants.MAX_ENERGY){
             int lunch = 0;
+            
+            int maxNeeded = Math.min(Constants.NB_UNIT_FOOD_PER_TURN, (int) Math.ceil((Constants.MAX_ENERGY-currEnergy)/Constants.FOOD_ENERGY));
             if(food!=null){
-                lunch = food.getFood(Constants.NB_UNIT_FOOD_PER_TURN);
+                lunch = food.getFood(maxNeeded) * Constants.FOOD_ENERGY;
             }
             
-            if(lunch > 0){
-                lunch = (lunch * Constants.FOOD_ENERGY);
-
-            }
-            else if (currCharge > 0) {
-                int n = Math.min(Constants.NB_UNIT_FOOD_PER_TURN, currCharge);
+            if (lunch==0 && currCharge > 0) {
+                int n = Math.min(maxNeeded, currCharge);
                 currCharge -= n;
                 lunch = (n * Constants.FOOD_ENERGY);
             }
@@ -202,252 +218,4 @@ public class Insect implements Steppable {
         }
         return null; // no food in current position
     }
-
-
-  /*protected int friendsNum(Beings beings) {
-    return friendsNum(beings,x,y);
- }
-  protected int friendsNum(Beings beings,int l,int c) {
-        int nb = 0;
-        for (int i = -1 ; i <= 1 ; i++) {
-        for (int j = -1 ; j <= 1 ; j++) {
-          if (i != 0 || j != 0) {
-              Int2D flocation = new Int2D(beings.yard.stx(l + i),beings.yard.sty(c + j));
-              Object ag = beings.yard.get(flocation.x,flocation.y);
-              if (ag != null) {
-                  if (ag.getClass() == this.getClass())
-                      nb++;
-              }
-          }
-        }
-      }
-      return nb;
-     }
-  
-  public boolean move(Beings beings) {
-    boolean done = false;
-    int n = beings.random.nextInt(Beings.NB_DIRECTIONS);
-    switch(n) {
-    case 0: 
-        if (beings.free(x-1, y) 
-             && friendsNum(beings,x-1,y) >= LEVEL) {
-         beings.yard.set(x, y, null);
-         beings.yard.set(beings.yard.stx(x-1), y, this);
-         x = beings.yard.stx(x-1);
-         done = true;
-        }
-        break;
-    case 1:
-        if (beings.free(x+1, y) && friendsNum(beings,x+1,y) >= LEVEL) {
-         beings.yard.set(x, y, null);
-         beings.yard.set(beings.yard.stx(x+1), y, this);
-         x = beings.yard.stx(x+1);
-         done = true;
-        }
-        break;
-    case 2:
-        if (beings.free(x, y-1) && friendsNum(beings,x,y-1) >= LEVEL) {
-            beings.yard.set(x, y, null);
-            beings.yard.set(x, beings.yard.sty(y-1), this);
-            y = beings.yard.sty(y-1);
-            done = true;
-        }
-        break;
-    case 3: 
-        if (beings.free(x, y+1) && friendsNum(beings,x,y+1) >= LEVEL) {
-            beings.yard.set(x, y, null);
-            beings.yard.set(x, beings.yard.sty(y+1), this);
-            y = beings.yard.sty(y+1);
-            done = true;
-        }
-        break;
-    case 4:
-        if (beings.free(x-1, y-1) && friendsNum(beings,x-1,y-1) >= LEVEL) {
-            beings.yard.set(x, y, null);
-            beings.yard.set(beings.yard.stx(x-1), beings.yard.sty(y-1), this);
-            x = beings.yard.stx(x-1);
-            y = beings.yard.sty(y-1);
-            done = true;
-        }
-        break;
-    case 5:
-        if (beings.free(x+1, y-1) && friendsNum(beings,x+1,y-1) >= LEVEL) {
-            beings.yard.set(x, y, null);
-            beings.yard.set(beings.yard.stx(x+1), beings.yard.sty(y-1), this);
-            x = beings.yard.stx(x+1);
-            y = beings.yard.sty(y-1);
-            done = true;
-        }
-        break;
-    case 6:
-        if (beings.free(x+1, y+1) && friendsNum(beings,x+1,y+1) >= LEVEL) {
-            beings.yard.set(x, y, null);
-            beings.yard.set(beings.yard.stx(x+1), beings.yard.sty(y+1), this);
-            x = beings.yard.stx(x+1);
-            y = beings.yard.sty(y+1);
-            done = true;
-        }
-        break;
-    case 7:
-        if (beings.free(x-1, y+1) && friendsNum(beings,x-1,y+1) >= LEVEL) {
-            beings.yard.set(x, y, null);
-            beings.yard.set(beings.yard.stx(x-1), beings.yard.sty(y+1), this);
-            x = beings.yard.stx(x-1);
-            y = beings.yard.sty(y+1);
-            done = true;
-        }
-        break;
-    }
-    return done;
- }
-  public boolean move2(Beings beings) {
-        boolean done = false;
-            int n = beings.random.nextInt(Beings.NB_DIRECTIONS);
-            switch(n) {
-            case 0: 
-                if (beings.free(x-1, y)) {
-                 beings.yard.set(x, y, null);
-                 beings.yard.set(beings.yard.stx(x-1), y, this);
-                 x = beings.yard.stx(x-1);
-                 done = true;
-                }
-                break;
-            case 1:
-                if (beings.free(x+1, y)) {
-                 beings.yard.set(x, y, null);
-                 beings.yard.set(beings.yard.stx(x+1), y, this);
-                 x = beings.yard.stx(x+1);
-                 done = true;
-                }
-                break;
-            case 2:
-                if (beings.free(x, y-1)) {
-                    beings.yard.set(x, y, null);
-                    beings.yard.set(x, beings.yard.sty(y-1), this);
-                    y = beings.yard.sty(y-1);
-                    done = true;
-                }
-                break;
-            case 3: 
-                if (beings.free(x, y+1)) {
-                    beings.yard.set(x, y, null);
-                    beings.yard.set(x, beings.yard.sty(y+1), this);
-                    y = beings.yard.sty(y+1);
-                    done = true;
-                }
-                break;
-            case 4:
-                if (beings.free(x-1, y-1)) {
-                    beings.yard.set(x, y, null);
-                    beings.yard.set(beings.yard.stx(x-1), beings.yard.sty(y-1), this);
-                    x = beings.yard.stx(x-1);
-                    y = beings.yard.sty(y-1);
-                    done = true;
-                }
-                break;
-            case 5:
-                if (beings.free(x+1, y-1)) {
-                    beings.yard.set(x, y, null);
-                    beings.yard.set(beings.yard.stx(x+1), beings.yard.sty(y-1), this);
-                    x = beings.yard.stx(x+1);
-                    y = beings.yard.sty(y-1);
-                    done = true;
-                }
-                break;
-            case 6:
-                if (beings.free(x+1, y+1)) {
-                    beings.yard.set(x, y, null);
-                    beings.yard.set(beings.yard.stx(x+1), beings.yard.sty(y+1), this);
-                    x = beings.yard.stx(x+1);
-                    y = beings.yard.sty(y+1);
-                    done = true;
-                }
-                break;
-            case 7:
-                if (beings.free(x-1, y+1)) {
-                    beings.yard.set(x, y, null);
-                    beings.yard.set(beings.yard.stx(x-1), beings.yard.sty(y+1), this);
-                    x = beings.yard.stx(x-1);
-                    y = beings.yard.sty(y+1);
-                    done = true;
-                }
-                break;
-            }
-        return done;
-     }
-  public boolean tryMove(Beings beings,int f) {
-        boolean done = false;
-            int n = beings.random.nextInt(Beings.NB_DIRECTIONS);
-            switch(n) {
-            case 0: 
-                if (beings.free(x-1, y) && friendsNum(beings,x-1,y) > f) {
-                 beings.yard.set(x, y, null);
-                 beings.yard.set(beings.yard.stx(x-1), y, this);
-                 x = beings.yard.stx(x-1);
-                 done = true;
-                }
-                break;
-            case 1:
-                if (beings.free(x+1, y) && friendsNum(beings,x+1,y) > f) {
-                 beings.yard.set(x, y, null);
-                 beings.yard.set(beings.yard.stx(x+1), y, this);
-                 x = beings.yard.stx(x+1);
-                 done = true;
-                }
-                break;
-            case 2:
-                if (beings.free(x, y-1)  && friendsNum(beings,x,y-1) > f) {
-                    beings.yard.set(x, y, null);
-                    beings.yard.set(x, beings.yard.sty(y-1), this);
-                    y = beings.yard.sty(y-1);
-                    done = true;
-                }
-                break;
-            case 3: 
-                if (beings.free(x, y+1)  && friendsNum(beings,x,y+1) > f) {
-                    beings.yard.set(x, y, null);
-                    beings.yard.set(x, beings.yard.sty(y+1), this);
-                    y = beings.yard.sty(y+1);
-                    done = true;
-                }
-                break;
-            case 4:
-                if (beings.free(x-1, y-1)  && friendsNum(beings,x-1,y-1) > f) {
-                    beings.yard.set(x, y, null);
-                    beings.yard.set(beings.yard.stx(x-1), beings.yard.sty(y-1), this);
-                    x = beings.yard.stx(x-1);
-                    y = beings.yard.sty(y-1);
-                    done = true;
-                }
-                break;
-            case 5:
-                if (beings.free(x+1, y-1)  && friendsNum(beings,x+1,y-1) > f) {
-                    beings.yard.set(x, y, null);
-                    beings.yard.set(beings.yard.stx(x+1), beings.yard.sty(y-1), this);
-                    x = beings.yard.stx(x+1);
-                    y = beings.yard.sty(y-1);
-                    done = true;
-                }
-                break;
-            case 6:
-                if (beings.free(x+1, y+1)  && friendsNum(beings,x+1,y+1) > f) {
-                    beings.yard.set(x, y, null);
-                    beings.yard.set(beings.yard.stx(x+1), beings.yard.sty(y+1), this);
-                    x = beings.yard.stx(x+1);
-                    y = beings.yard.sty(y+1);
-                    done = true;
-                }
-                break;
-            case 7:
-                if (beings.free(x-1, y+1) && friendsNum(beings,x-1,y+1) > f) {
-                    beings.yard.set(x, y, null);
-                    beings.yard.set(beings.yard.stx(x-1), beings.yard.sty(y+1), this);
-                    x = beings.yard.stx(x-1);
-                    y = beings.yard.sty(y+1);
-                    done = true;
-                }
-                break;
-            }
-        return done;
-     }*/
 }

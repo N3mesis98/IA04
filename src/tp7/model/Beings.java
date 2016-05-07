@@ -24,8 +24,8 @@ public class Beings extends SimState {
         addFood();
         
         // specific insects
-        addSpecificInsect(0, Constants.CAPACITY, 0, "gonzalez"); numInsects++;
-        addSpecificInsect(0, 0, Constants.CAPACITY, "perception"); numInsects++;
+        //addSpecificInsect(0, Constants.CAPACITY, 0, "gonzalez"); numInsects++;
+        //addSpecificInsect(0, 0, Constants.CAPACITY, "perception"); numInsects++;
     }
     
     
@@ -83,24 +83,4 @@ public class Beings extends SimState {
     public void setNumInsects(int numInsects) {
         this.numInsects = numInsects;
     }
-/*  public boolean free(int x,int y) {
-        int xx = yard.stx(x);
-        int yy = yard.sty(y);
-        return yard.get(xx,yy) == null;
-    }*/
-
-
-    /*private Int2D getFreeLocation() {
-      Int2D location = new Int2D(random.nextInt(yard.getWidth()),
-               random.nextInt(yard.getHeight()) );
-      Object ag;
-      while ((ag = yard.get(location.x,location.y)) != null) {
-          location = new Int2D(random.nextInt(yard.getWidth()),
-                   random.nextInt(yard.getHeight()) );
-      }
-      return location;
-    }*/
-
-
-  //public  int  getNumStudents()  {  return  Constants.NUM_INSECT;  }
 }
